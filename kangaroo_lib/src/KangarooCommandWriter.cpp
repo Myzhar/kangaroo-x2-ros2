@@ -18,8 +18,8 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "KangarooCommandWriter.hpp"
 
 #include "KangarooCRC.hpp"
-#include "compatibility/Stream.h"
 #include "tools.hpp"
+#include <string.h>
 
 KangarooCommandWriter::KangarooCommandWriter()
     : _address(0), _command(0), _length(0) {

@@ -19,7 +19,6 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "KangarooSerial.hpp"
 
 #include "KangarooReplyReceiver.hpp"
-#include "compatibility/Stream.h"
 
 KangarooSerial::KangarooSerial(Stream& port) : _port(port) {}
 
