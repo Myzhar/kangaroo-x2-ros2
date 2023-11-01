@@ -17,6 +17,9 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 #include "KangarooMonitor.hpp"
+#include "KangarooChannel.hpp"
+#include "KangarooStatus.hpp"
+#include "KangarooTimeout.hpp"
 
 KangarooMonitor::KangarooMonitor()
 {

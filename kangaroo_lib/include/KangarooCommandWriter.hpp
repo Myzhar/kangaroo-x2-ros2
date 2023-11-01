@@ -3,6 +3,8 @@
 
 #include "types.hpp"
 
+class Stream;
+
 class KangarooCommandWriter {
  public:
   KangarooCommandWriter();

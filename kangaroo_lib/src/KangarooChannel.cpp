@@ -21,6 +21,8 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "KangarooCommandWriter.hpp"
 #include "KangarooMonitor.hpp"
 #include "KangarooSerial.hpp"
+#include "KangarooStatus.hpp"
+#include "KangarooTimeout.hpp"
 
 static byte nextCode(byte code) {
   if (++code >= 0x80) {
@@ -180,12 +182,12 @@ void KangarooChannel::baudRate(int32_t baudRate) {
 }
 
 KangarooError KangarooChannel::powerDown() {
-  int32_t values[0];
+  int32_t* values = nullptr;
   return systemCommand(KANGAROO_SYS_POWER_DOWN, true, values, 0);
 }
 
 KangarooError KangarooChannel::powerDownAll() {
-  int32_t values[0];
+  int32_t* values = nullptr;
   return systemCommand(KANGAROO_SYS_POWER_DOWN_ALL, true, values, 0);
 }
 

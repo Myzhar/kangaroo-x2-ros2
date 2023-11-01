@@ -1,8 +1,10 @@
 #ifndef KANGAROO_SERIAL_HPP
 #define KANGAROO_SERIAL_HPP
 
-#include "KangarooReplyReader.hpp"
 #include "types.hpp"
+
+#include "KangarooReplyReceiver.hpp"
+class Stream;
 
 /*!
 \class KangarooSerial

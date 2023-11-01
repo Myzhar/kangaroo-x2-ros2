@@ -43,9 +43,6 @@ class KangarooTimeout {
   */
   void reset();
 
- protected:
-  uint64_t millis();
-
  private:
   uint64_t _start;
   uint64_t _timeoutMS;

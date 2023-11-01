@@ -19,8 +19,11 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "KangarooReplyReceiver.hpp"
 #include "KangarooCRC.hpp"
 
+#include <string.h>
+
 KangarooReplyReceiver::KangarooReplyReceiver()
 {
+  memset(_data, 0, sizeof(_data));
   reset();
 }
 

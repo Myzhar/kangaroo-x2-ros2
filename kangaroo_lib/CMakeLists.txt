@@ -2,14 +2,20 @@ cmake_minimum_required(VERSION 3.5)
 project(kangaroo_x2_lib)
 
 ##################################################################
-# Generate symbols for the IDE indexer
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-##################################################################
-
-##################################################################
 # Project Options
 option(BUILD_TESTING "Build tests" OFF)
 option(STATIC_CHECK "Run static check" OFF)
+
+## Generate symbols for IDE indexer
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if(STATIC_CHECK)
+    find_program(CPPCHECK cppcheck)
+    if(CPPCHECK)
+        message(STATUS "Found cppcheck")
+        set(CMAKE_CXX_CPPCHECK cppcheck;--std=c++11;--enable=all)
+    endif() 
+endif()
 ##################################################################
 
 ##################################################################
@@ -79,6 +85,24 @@ set(LIB_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooChannel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooMonitor.cpp
 )
+
+set(ARDU_INC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/compatibility/Print.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/compatibility/Printable.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/compatibility/Stream.h
+)
+
+set(ARDU_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/compatibility/Print.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/compatibility/Stream.cpp
+)
+##################################################################
+
+##################################################################
+# Build tests
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif()
 ##################################################################
 
 ##################################################################
@@ -86,6 +110,8 @@ set(LIB_SRC
 add_library(${PROJECT_NAME}
     ${LIB_INC}
     ${LIB_SRC}
+    ${ARDU_INC}
+    ${ARDU_SRC}
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
@@ -96,5 +122,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     PRIVATE src
+)
+##################################################################
+
+##################################################################
+# Install 
+install(TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 ##################################################################

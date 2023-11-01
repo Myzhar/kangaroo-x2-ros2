@@ -16,7 +16,7 @@ NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include <chrono>
+#include "tools.hpp"
 
 #include "KangarooTimeout.hpp"
 
@@ -33,7 +33,8 @@ boolean KangarooTimeout::canExpire() const
 
 boolean KangarooTimeout::expired() const
 {
-  return canExpire() && (millis() - _start >= _timeoutMS);
+  auto now = millis();
+  return canExpire() && (now - _start >= _timeoutMS);
 }
 
 void KangarooTimeout::expire()
@@ -47,11 +48,4 @@ void KangarooTimeout::reset()
   _start = millis();
 }
 
-uint64_t KangarooTimeout:: millis()
-{
-  auto now = std::chrono::system_clock::now();
-  auto duration = now.time_since_epoch();
-  auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-  return msec;
-}

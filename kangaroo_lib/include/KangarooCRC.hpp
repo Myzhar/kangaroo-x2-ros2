@@ -17,7 +17,7 @@ class KangarooCRC {
   static uint16_t value(const byte* data, size_t lengthOfData);
 
  private:
-  uint16_t _crc;
+  uint16_t _crc = 0;
 };
 
 #endif  // KANGAROO_CRC_HPP

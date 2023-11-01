@@ -2,8 +2,14 @@
 #define KANGAROO_CHANNEL_HPP
 
 #include "types.hpp"
-#include "KangarooSerial.hpp"
-#include "KangarooMonitor.hpp"
+
+#include "KangarooStatus.hpp"
+
+class KangarooSerial;
+class KangarooStatus;
+class KangarooMonitor;
+class KangarooCommandWriter;
+class KangarooTimeout;
 
 /*!
 \class KangarooChannel

@@ -15,13 +15,16 @@ RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 */
-
 #include "KangarooCommandWriter.hpp"
 
 #include "KangarooCRC.hpp"
+#include "compatibility/Stream.h"
 #include "tools.hpp"
 
-KangarooCommandWriter::KangarooCommandWriter() : _length(0) {}
+KangarooCommandWriter::KangarooCommandWriter()
+    : _address(0), _command(0), _length(0) {
+  memset(_data, 0, sizeof(_data));
+}
 
 void KangarooCommandWriter::write(byte data) { _data[_length++] = data; }
 

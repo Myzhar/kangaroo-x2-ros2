@@ -69,7 +69,9 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "any": "cpp"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cmake.sourceDirectory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_lib"
 }

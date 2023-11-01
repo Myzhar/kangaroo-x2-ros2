@@ -16,21 +16,23 @@ NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "Kangaroo.h"
+#include "KangarooSerial.hpp"
 
-KangarooSerial::KangarooSerial(Stream& port)
-  : _port(port)
-{
-}
+#include "KangarooReplyReceiver.hpp"
+#include "compatibility/Stream.h"
 
-boolean KangarooSerial::tryReceivePacket()
-{
-  while (1)
-  {
+KangarooSerial::KangarooSerial(Stream& port) : _port(port) {}
+
+boolean KangarooSerial::tryReceivePacket() {
+  while (1) {
     int value = port().read();
-    if (value < 0) { return false; }
+    if (value < 0) {
+      return false;
+    }
 
     _receiver.read((byte)value);
-    if (_receiver.ready()) { return true; }
+    if (_receiver.ready()) {
+      return true;
+    }
   }
 }

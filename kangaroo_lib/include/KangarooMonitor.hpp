@@ -1,10 +1,11 @@
 #ifndef KANGAROO_MONITOR_HPP
 #define KANGAROO_MONITOR_HPP
 
-#include "KangarooChannel.hpp"
-#include "KangarooStatus.hpp"
-#include "KangarooTimeout.hpp"
 #include "types.hpp"
+
+class KangarooChannel;
+class KangarooStatus;
+class KangarooTimeout;
 
 /*!
 \class KangarooMonitor
