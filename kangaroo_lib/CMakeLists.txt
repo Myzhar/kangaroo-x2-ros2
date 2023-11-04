@@ -63,6 +63,7 @@ set(EXT_LIBS
 set(LIB_INC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/types.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/tools.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Stream.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/KangarooCRC.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/KangarooCommandWriter.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/KangarooReplyReceiver.hpp
@@ -75,6 +76,7 @@ set(LIB_INC
 )
 
 set(LIB_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Stream.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooCRC.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooCommandWriter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooReplyReceiver.cpp
@@ -84,17 +86,6 @@ set(LIB_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooTimeout.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooChannel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooMonitor.cpp
-)
-
-set(ARDU_INC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/compatibility/Print.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/compatibility/Printable.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/compatibility/Stream.h
-)
-
-set(ARDU_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/compatibility/Print.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/compatibility/Stream.cpp
 )
 ##################################################################
 
@@ -110,8 +101,6 @@ endif()
 add_library(${PROJECT_NAME}
     ${LIB_INC}
     ${LIB_SRC}
-    ${ARDU_INC}
-    ${ARDU_SRC}
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC

@@ -4,7 +4,7 @@
 #include "types.hpp"
 
 #include "KangarooReplyReceiver.hpp"
-class Stream;
+#include "Stream.hpp"
 
 /*!
 \class KangarooSerial

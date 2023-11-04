@@ -24,12 +24,12 @@ KangarooSerial::KangarooSerial(Stream& port) : _port(port) {}
 
 boolean KangarooSerial::tryReceivePacket() {
   while (1) {
-    int value = port().read();
-    if (value < 0) {
+    byte data;
+    if (!port().read(data)) {
       return false;
     }
 
-    _receiver.read((byte)value);
+    _receiver.read(data);
     if (_receiver.ready()) {
       return true;
     }

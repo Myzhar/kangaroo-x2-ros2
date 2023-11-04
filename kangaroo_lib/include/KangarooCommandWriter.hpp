@@ -2,8 +2,7 @@
 #define KANGAROO_COMMAND_WRITER_HPP
 
 #include "types.hpp"
-
-class Stream;
+#include "Stream.hpp"
 
 class KangarooCommandWriter {
  public:
