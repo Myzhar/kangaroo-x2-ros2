@@ -366,8 +366,8 @@ private:
   int32_t          _commandTimeout;
   byte             _echoCode;
   uint32_t         _monitorCode;
-  KangarooGetType  _monitoredGetType;
-  KangarooGetFlags _monitoredGetFlags;
+  KangarooGetType  _monitoredGetType = KANGAROO_GETSS;
+  KangarooGetFlags _monitoredGetFlags = KANGAROO_GET_DEFAULT;
   KangarooStatus   _monitoredGetResult;
   byte             _monitoredSequenceCode;
   boolean          _monitoredSequenceCodeIsReady;

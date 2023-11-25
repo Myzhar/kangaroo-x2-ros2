@@ -5,6 +5,7 @@ project(kangaroo_x2_lib)
 # Project Options
 option(BUILD_TESTING "Build tests" OFF)
 option(STATIC_CHECK "Run static check" OFF)
+option(BUILD_DEMO "Build demos" ON)
 
 ## Generate symbols for IDE indexer
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -76,6 +77,7 @@ set(LIB_INC
 )
 
 set(LIB_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tools.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Stream.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooCRC.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooCommandWriter.cpp
@@ -87,13 +89,6 @@ set(LIB_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooChannel.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/KangarooMonitor.cpp
 )
-##################################################################
-
-##################################################################
-# Build tests
-if(BUILD_TESTS)
-    add_subdirectory(test)
-endif()
 ##################################################################
 
 ##################################################################
@@ -112,6 +107,20 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
     PRIVATE src
 )
+##################################################################
+
+##################################################################
+# Build demos
+if(BUILD_DEMO)
+    add_subdirectory(examples)
+endif()
+##################################################################
+
+##################################################################
+# Build tests
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif()
 ##################################################################
 
 ##################################################################

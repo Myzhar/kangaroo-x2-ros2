@@ -34,7 +34,7 @@ boolean KangarooTimeout::canExpire() const
 boolean KangarooTimeout::expired() const
 {
   auto now = millis();
-  return canExpire() && (now - _start >= _timeoutMS);
+  return canExpire() && (static_cast<int64_t>(now) - _start >= _timeoutMS);
 }
 
 void KangarooTimeout::expire()

@@ -44,8 +44,8 @@ class KangarooTimeout {
   void reset();
 
  private:
-  uint64_t _start;
-  uint64_t _timeoutMS;
+  int64_t _start;
+  int64_t _timeoutMS;
 };
 
 #endif  // KANGAROO_TIMEOUT_HPP
