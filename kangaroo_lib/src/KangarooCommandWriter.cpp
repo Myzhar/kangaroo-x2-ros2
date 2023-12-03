@@ -17,10 +17,9 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #include "KangarooCommandWriter.hpp"
 
-#include <string.h>
-
 #include "KangarooCRC.hpp"
 #include "tools.hpp"
+#include <string.h>
 
 KangarooCommandWriter::KangarooCommandWriter()
     : _address(0), _command(0), _length(0) {

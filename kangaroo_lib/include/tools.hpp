@@ -1,8 +1,9 @@
 #ifndef TOOLS_HPP
 #define TOOLS_HPP
 
-#include "types.hpp"
 #include <chrono>
+
+#include "types.hpp"
 
 template <class T>
 const T& constrain(const T& x, const T& a, const T& b) {

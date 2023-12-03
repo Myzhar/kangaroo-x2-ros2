@@ -365,9 +365,10 @@ class KangarooChannel {
  private:
   KangarooStatus getSpecial(KangarooGetType type, KangarooGetFlags flags,
                             const KangarooTimeout& timeout);
-  KangarooMonitor motion(uint8_t motionType, int32_t motionValue, uint8_t limit1Type,
-                         int32_t limit1Value, uint8_t limit2Type,
-                         int32_t limit2Value, KangarooMoveFlags flags);
+  KangarooMonitor motion(uint8_t motionType, int32_t motionValue,
+                         uint8_t limit1Type, int32_t limit1Value,
+                         uint8_t limit2Type, int32_t limit2Value,
+                         KangarooMoveFlags flags);
   KangarooMonitor set(KangarooCommand command, KangarooCommandWriter& contents,
                       KangarooMoveFlags moveFlags = KANGAROO_MOVE_DEFAULT,
                       KangarooGetType getType = KANGAROO_GETP);
