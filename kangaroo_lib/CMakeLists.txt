@@ -55,7 +55,11 @@ endif()
 
 ##################################################################
 # LIBRARIES
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules)
+find_package(LibSerial REQUIRED)
+
 set(EXT_LIBS
+    LibSerial_LIBRARY
 )
 
 ##################################################################
@@ -103,6 +107,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+    ${LibSerial_INCLUDE_DIR}
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     PRIVATE src

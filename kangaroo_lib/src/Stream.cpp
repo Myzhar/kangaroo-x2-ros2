@@ -13,7 +13,10 @@ Stream::Stream() : _comHandle(-1), _isOpen(false) {}
 
 Stream::~Stream() { close(); }
 
-bool Stream::openSerialPort(std::string& port_name, int baudrate) {
+  replace termios with libserial calls
+
+
+bool Stream::openSerialPort(std::string& port_name, speed_t baudrate) {
   int flags = (O_RDWR | O_NOCTTY | O_NONBLOCK);
 
   _comHandle = ::open(port_name.c_str(), flags);
@@ -33,7 +36,7 @@ bool Stream::openSerialPort(std::string& port_name, int baudrate) {
   }
 
   options.c_cflag |= (tcflag_t)(CLOCAL | CREAD | CS8 | CRTSCTS);
-  options.c_cflag &= (tcflag_t) ~(CSTOPB | PARENB | PARODD);
+   options.c_cflag &= (tcflag_t) ~(CSTOPB | PARENB | PARODD);
   options.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
                                   ISIG | IEXTEN);  // |ECHOPRT
   options.c_oflag &= (tcflag_t) ~(OPOST);
@@ -83,7 +86,7 @@ ssize_t Stream::write(const byte* buffer, size_t lengthOfBuffer) {
   ssize_t len = -1;
 
   if (_isOpen) {
-    len = ::write(_comHandle, buffer, lengthOfBuffer);    
+    len = ::write(_comHandle, buffer, lengthOfBuffer);
   }
   return len;
 }

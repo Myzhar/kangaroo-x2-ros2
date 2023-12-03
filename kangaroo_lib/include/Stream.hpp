@@ -13,7 +13,7 @@ class Stream {
   Stream(/* args */);
   ~Stream();
 
-  bool openSerialPort(std::string& port_name, int baudrate=B115200);
+  bool openSerialPort(std::string& port_name, speed_t baudrate=B115200);
 
   ssize_t write(const byte* buffer, size_t lengthOfBuffer);
   bool read(byte& data);
