@@ -16,36 +16,26 @@ NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "tools.hpp"
-
 #include "KangarooTimeout.hpp"
 
-KangarooTimeout::KangarooTimeout(uint64_t timeoutMS)
-  : _timeoutMS(timeoutMS)
-{
+#include "tools.hpp"
+
+KangarooTimeout::KangarooTimeout(uint64_t timeoutMS) : _timeoutMS(timeoutMS) {
   reset();
 }
 
-boolean KangarooTimeout::canExpire() const
-{
-  return _timeoutMS >= 0;
-}
+bool KangarooTimeout::canExpire() const { return _timeoutMS >= 0; }
 
-boolean KangarooTimeout::expired() const
-{
+bool KangarooTimeout::expired() const {
   auto now = millis();
   return canExpire() && (static_cast<int64_t>(now) - _start >= _timeoutMS);
 }
 
-void KangarooTimeout::expire()
-{
-  if (!canExpire()) { return; }
+void KangarooTimeout::expire() {
+  if (!canExpire()) {
+    return;
+  }
   _start = millis() - _timeoutMS;
 }
 
-void KangarooTimeout::reset()
-{
-  _start = millis();
-}
-
-
+void KangarooTimeout::reset() { _start = millis(); }

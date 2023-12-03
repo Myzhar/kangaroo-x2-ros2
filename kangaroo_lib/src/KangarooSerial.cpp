@@ -22,10 +22,10 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 
 KangarooSerial::KangarooSerial(Stream& port) : _port(port) {}
 
-boolean KangarooSerial::tryReceivePacket() {
+bool KangarooSerial::tryReceivePacket() {
   while (1) {
-    byte data;
-    if (!port().read(data)) {
+    uint8_t data;
+    if (!port().readByte(data)) {
       return false;
     }
 

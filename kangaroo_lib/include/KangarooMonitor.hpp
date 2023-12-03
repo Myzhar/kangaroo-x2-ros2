@@ -35,7 +35,7 @@ class KangarooMonitor {
   the same channel, the old KangarooMonitor will become invalid. \return True if
   the status is valid.
   */
-  boolean valid() const;
+  bool valid() const;
 
   /*!
   Updates the status. The channel's command timeout is used.
@@ -89,8 +89,8 @@ Waits until all of the monitors are done or the timeout expires.
 \return True if all of the monitors are done, or false if the timeout expired.
 \remark If a monitor is null, it is ignored.
 */
-boolean waitAll(size_t count, KangarooMonitor* monitors[],
-                int32_t timeoutMS = KANGAROO_INFINITE_TIMEOUT);
+bool waitAll(size_t count, KangarooMonitor* monitors[],
+             int32_t timeoutMS = KANGAROO_INFINITE_TIMEOUT);
 
 /*!
 Waits until all of the monitors are done or the timeout object expires.
@@ -100,8 +100,8 @@ Waits until all of the monitors are done or the timeout object expires.
 \return True if all of the monitors are done, or false if the timeout expired.
 \remark If a monitor is null, it is ignored.
 */
-boolean waitAll(size_t count, KangarooMonitor* monitors[],
-                const KangarooTimeout& timeout);
+bool waitAll(size_t count, KangarooMonitor* monitors[],
+             const KangarooTimeout& timeout);
 
 /*!
 Waits until at least one of the monitors is done or the timeout expires.

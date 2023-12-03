@@ -8,22 +8,22 @@ class KangarooReplyReceiver {
   KangarooReplyReceiver();
 
  public:
-  inline byte address() const { return _data[0]; }
+  inline uint8_t address() const { return _data[0]; }
   inline KangarooReplyCode command() const {
     return (KangarooReplyCode)_data[1];
   }
-  inline const byte* data() const { return &_data[3]; }
+  inline const uint8_t* data() const { return &_data[3]; }
   inline size_t length() const { return _length - 5; }
 
  public:
-  inline boolean ready() const { return _ready; }
-  void read(byte data);
+  inline bool ready() const { return _ready; }
+  void read(uint8_t data);
   void reset();
 
  private:
   size_t _length;
-  boolean _ready;
-  byte _data[KANGAROO_COMMAND_MAX_BUFFER_LENGTH];
+  bool _ready;
+  uint8_t _data[KANGAROO_COMMAND_MAX_BUFFER_LENGTH];
 };
 
 #endif  // KANGAROO_REPLY_RECEIVER_HPP

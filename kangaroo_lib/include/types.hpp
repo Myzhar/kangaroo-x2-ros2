@@ -4,12 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// Define the byte type
-typedef uint8_t byte;
-
-// Define the boolean type
-typedef bool boolean;
-
 #define KANGAROO_BIT_PACKED_MAX_VALUE 536870911
 #define KANGAROO_COMMAND_MAX_DATA_LENGTH 27
 #define KANGAROO_COMMAND_MAX_BUFFER_LENGTH 32

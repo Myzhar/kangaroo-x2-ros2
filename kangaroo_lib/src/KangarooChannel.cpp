@@ -24,7 +24,7 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "KangarooStatus.hpp"
 #include "KangarooTimeout.hpp"
 
-static byte nextCode(byte code) {
+static uint8_t nextCode(uint8_t code) {
   if (++code >= 0x80) {
     code = 1;
   }  // The device will start up with code 0, so we do this to distinguish that
@@ -33,7 +33,7 @@ static byte nextCode(byte code) {
 }
 
 KangarooChannel::KangarooChannel(KangarooSerial& serial, char name,
-                                 byte address)
+                                 uint8_t address)
     : _serial(serial),
       _name(),
       _address(address),
@@ -61,7 +61,7 @@ KangarooChannel::KangarooChannel(KangarooSerial& serial, char name,
 
 KangarooChannel::~KangarooChannel() {}
 
-KangarooError KangarooChannel::start(boolean onlyIfNecessary) {
+KangarooError KangarooChannel::start(bool onlyIfNecessary) {
   KangarooCommandWriter contents;
   return set(KANGAROO_CMD_START, contents,
              onlyIfNecessary ? KANGAROO_MOVE_ONLY_IF_NECESSARY
@@ -78,7 +78,7 @@ KangarooError KangarooChannel::units(int32_t desiredUnits,
   return set(KANGAROO_CMD_UNITS, contents).status().error();
 }
 
-KangarooMonitor KangarooChannel::home(boolean onlyIfNecessary) {
+KangarooMonitor KangarooChannel::home(bool onlyIfNecessary) {
   KangarooCommandWriter contents;
   return set(KANGAROO_CMD_HOME, contents,
              onlyIfNecessary ? KANGAROO_MOVE_ONLY_IF_NECESSARY
@@ -125,9 +125,9 @@ KangarooMonitor KangarooChannel::ssi(int32_t speedIncrement,
                 KANGAROO_UNSPECIFIED_LIMIT, flags);
 }
 
-KangarooMonitor KangarooChannel::motion(byte motionType, int32_t motionValue,
-                                        byte limit1Type, int32_t limit1Value,
-                                        byte limit2Type, int32_t limit2Value,
+KangarooMonitor KangarooChannel::motion(uint8_t motionType, int32_t motionValue,
+                                        uint8_t limit1Type, int32_t limit1Value,
+                                        uint8_t limit2Type, int32_t limit2Value,
                                         KangarooMoveFlags flags) {
   KangarooCommandWriter contents;
 
@@ -201,10 +201,10 @@ KangarooError KangarooChannel::serialTimeout(int32_t milliseconds) {
 }
 
 KangarooError KangarooChannel::systemCommand(
-    KangarooSystemCommand systemCommand, boolean expectReply, int32_t values[],
+    KangarooSystemCommand systemCommand, bool expectReply, int32_t values[],
     size_t valueCount) {
   KangarooCommandWriter contents;
-  contents.write((byte)systemCommand);
+  contents.write((uint8_t)systemCommand);
   for (size_t i = 0; i < valueCount; i++) {
     contents.writeBitPackedNumber(values[i]);
   }
@@ -235,10 +235,10 @@ KangarooStatus KangarooChannel::getSpecial(KangarooGetType type,
 
       // Send the Get command.
       KangarooCommandWriter writer;
-      writer.write((byte)name());
-      writer.write((byte)flags);
+      writer.write((uint8_t)name());
+      writer.write((uint8_t)flags);
       writer.write(_echoCode);
-      writer.write((byte)type);
+      writer.write((uint8_t)type);
 
       Stream& port = _serial.port();
       writer.writeToStream(port, address(), KANGAROO_CMD_STATUS);
@@ -276,8 +276,8 @@ void KangarooChannel::setNoReply(KangarooCommand command,
   Stream& port = _serial.port();
 
   KangarooCommandWriter writer;
-  writer.write((byte)name());
-  writer.write((byte)moveFlags);
+  writer.write((uint8_t)name());
+  writer.write((uint8_t)moveFlags);
   if (moveFlags & KANGAROO_MOVE_SEQUENCE_CODE) {
     writer.write(_monitoredSequenceCode);
   }
@@ -287,7 +287,7 @@ void KangarooChannel::setNoReply(KangarooCommand command,
 }
 
 // We return a status only if there is an error.
-boolean KangarooChannel::getInitialSequenceCodeIfNecessary(
+bool KangarooChannel::getInitialSequenceCodeIfNecessary(
     const KangarooTimeout& timeout, KangarooStatus& status) {
   if (_monitoredSequenceCodeIsReady) {
     return false;
@@ -339,9 +339,8 @@ KangarooMonitor KangarooChannel::set(KangarooCommand command,
 // Internally generated errors (like timeouts) have negative numbers, so we pass
 // them along. For any received error, we've failed to update if the sequence
 // codes don't match.
-boolean KangarooChannel::updateMonitoredResult(
-    const KangarooTimeout& timeout,
-    boolean acceptRepliesWithStartupSequenceCode) {
+bool KangarooChannel::updateMonitoredResult(
+    const KangarooTimeout& timeout, bool acceptRepliesWithStartupSequenceCode) {
   _monitoredGetResult =
       getSpecial(_monitoredGetType, _monitoredGetFlags, timeout);
 

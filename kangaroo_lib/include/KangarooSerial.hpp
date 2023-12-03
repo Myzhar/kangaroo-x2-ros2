@@ -1,10 +1,9 @@
 #ifndef KANGAROO_SERIAL_HPP
 #define KANGAROO_SERIAL_HPP
 
-#include "types.hpp"
-
 #include "KangarooReplyReceiver.hpp"
 #include "Stream.hpp"
+#include "types.hpp"
 
 /*!
 \class KangarooSerial
@@ -29,7 +28,7 @@ class KangarooSerial {
   inline Stream& port() { return _port; }
 
  private:
-  boolean tryReceivePacket();
+  bool tryReceivePacket();
 
  private:
   KangarooSerial(KangarooSerial& serial);  // no copy

@@ -8,9 +8,9 @@ int main(int argc, char *argv[])
 {
     std::string ser_port_name = "/dev/ttyUSB0";
     Stream stream;
-    if(!stream.openSerialPort( ser_port_name , B115200))
+    if(!stream.openSerialPort( ser_port_name , LibSerial::BaudRate::BAUD_115200))
     {
-        std::cerr << "Error opening serial port '" << ser_port_name << "' !" << std::endl;
+        std::cerr << "Error opening serial port '" << ser_port_name << "'!" << std::endl;
         return EXIT_FAILURE;
     }
 

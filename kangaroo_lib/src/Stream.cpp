@@ -1,118 +1,60 @@
 #include "Stream.hpp"
 
-#include <errno.h>
-#include <fcntl.h>
 #include <string.h>
-#include <sys/file.h>
-#include <termios.h>
-#include <unistd.h>
 
 #include <iostream>
 
-Stream::Stream() : _comHandle(-1), _isOpen(false) {}
+Stream::Stream() {}
 
 Stream::~Stream() { close(); }
 
-  replace termios with libserial calls
+bool Stream::openSerialPort(std::string& port_name,
+                            const LibSerial::BaudRate& baudrate) {
+  try {
+    _serial = std::make_shared<LibSerial::SerialPort>(
+        port_name, baudrate, LibSerial::CharacterSize::CHAR_SIZE_8,
+        LibSerial::FlowControl::FLOW_CONTROL_NONE,
+        LibSerial::Parity::PARITY_NONE, LibSerial::StopBits::STOP_BITS_1);
 
-
-bool Stream::openSerialPort(std::string& port_name, speed_t baudrate) {
-  int flags = (O_RDWR | O_NOCTTY | O_NONBLOCK);
-
-  _comHandle = ::open(port_name.c_str(), flags);
-  if (-1 == _comHandle) {
-    std::cerr << "openSerialPort::Open open error!" << std::endl;
+    _serial->Open(port_name);
+  } catch (LibSerial::OpenFailed& ex) {
+    std::cerr << "LibSerial open failed: " << ex.what() << std::endl;
     return false;
   }
 
-  _isOpen = true;
-
-  // get port options
-  struct termios options;
-  if (-1 == ::tcgetattr(_comHandle, &options)) {
-    std::cerr << "Stream::openSerialPort::Open tcgetattr error!" << std::endl;
-    close();
-    return false;
-  }
-
-  options.c_cflag |= (tcflag_t)(CLOCAL | CREAD | CS8 | CRTSCTS);
-   options.c_cflag &= (tcflag_t) ~(CSTOPB | PARENB | PARODD);
-  options.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
-                                  ISIG | IEXTEN);  // |ECHOPRT
-  options.c_oflag &= (tcflag_t) ~(OPOST);
-  options.c_iflag &=
-      (tcflag_t) ~(IXON | IXOFF | INLCR | IGNCR | ICRNL | IGNBRK);
-
-  options.c_cc[VMIN] = 0;
-  options.c_cc[VTIME] = 0;
-
-  if (::cfsetispeed(&options, baudrate) == -1) {
-    std::cerr << "Stream::openSerialPort::Open cfsetispeed error!" << std::endl;
-    close();
-    return false;
-  }
-
-  if (tcsetattr(_comHandle, TCSANOW, &options) < 0) {
-    std::cerr << "Stream::openSerialPort::Open tcsetattr error!" << std::endl;
-    close();
-    return false;
-  }
-
-  if (::tcflush(_comHandle, TCIFLUSH) == -1) {
-    std::cerr << "Stream::openSerialPort::Open tcflush error!" << std::endl;
-    close();
-    return false;
-  }
-
-  _isOpen = true;
-
-  return true;
+  return _serial->IsOpen();
 }
 
 void Stream::close() {
-  if (_isOpen == false) {
+  if (!_serial || !_serial->IsOpen()) {
     return;
   }
 
-  if (_comHandle != -1) {
-    close();
-    _comHandle = -1;
-  }
-
-  _isOpen = false;
+  _serial->Close();
 }
 
-ssize_t Stream::write(const byte* buffer, size_t lengthOfBuffer) {
+ssize_t Stream::writeBuffer(const uint8_t* buffer, size_t lengthOfBuffer) {
   ssize_t len = -1;
 
-  if (_isOpen) {
-    len = ::write(_comHandle, buffer, lengthOfBuffer);
+  if (_serial->IsOpen()) {
+    LibSerial::DataBuffer dataBuffer(buffer, buffer + lengthOfBuffer);
+
+    _serial->Write(dataBuffer);
   }
   return len;
 }
 
-bool Stream::read(byte& data) {
-  static timespec timeout = {0, static_cast<int>(100 * 1e6)};
-  ssize_t len = -1;
-
-  if (_isOpen) {
-    fd_set read_fds;
-    FD_ZERO(&read_fds);
-    FD_SET(_comHandle, &read_fds);
-    int r = ::pselect(_comHandle + 1, &read_fds, NULL, NULL, &timeout, NULL);
-    if (r < 0) {
-      // Select was interrupted
-      if (errno == EINTR) {
-        return false;
-      }
-    } else if (r == 0) {  // timeout
-      return false;
-    }
-
-    if (FD_ISSET(_comHandle, &read_fds)) {
-      len = ::read(_comHandle, &data, 1);
-    }
+bool Stream::readByte(uint8_t& data) {
+  if (!_serial->IsOpen()) {
+    return false;
   }
 
-  return len == 1;
+  try {
+    _serial->ReadByte(data, 25);
+  } catch (LibSerial::ReadTimeout& ex) {
+    std::cerr << "LibSerial read timeout: " << ex.what() << std::endl;
+    return false;
+  }
+
+  return true;
 }

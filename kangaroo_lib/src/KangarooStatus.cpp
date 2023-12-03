@@ -17,70 +17,76 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 #include "KangarooStatus.hpp"
+
 #include "KangarooReplyReader.hpp"
 
-KangarooStatus::KangarooStatus()
-{
+KangarooStatus::KangarooStatus() { init(); }
+
+KangarooStatus::KangarooStatus(const uint8_t* data, size_t length) {
   init();
+  if (parse(data, length)) {
+    _valid = true;
+  } else {
+    init();
+  }
 }
 
-KangarooStatus::KangarooStatus(const byte* data, size_t length)
-{
-  init();
-  if (parse(data, length)) { _valid = true; } else { init(); }
-}
-
-KangarooStatus KangarooStatus::createInvalidStatus()
-{
+KangarooStatus KangarooStatus::createInvalidStatus() {
   return createFromError(KANGAROO_INVALID_STATUS);
 }
 
-KangarooStatus KangarooStatus::createTimedOut()
-{
+KangarooStatus KangarooStatus::createTimedOut() {
   return createFromError(KANGAROO_TIMED_OUT);
 }
 
-KangarooStatus KangarooStatus::createFromError(KangarooError error)
-{
+KangarooStatus KangarooStatus::createFromError(KangarooError error) {
   KangarooStatus result;
   result._valid = true;
-  result._flags = (byte)KANGAROO_STATUS_ERROR;
+  result._flags = (uint8_t)KANGAROO_STATUS_ERROR;
   result._value = error;
   return result;
 }
 
-void KangarooStatus::init()
-{
-  _valid   = false;
+void KangarooStatus::init() {
+  _valid = false;
   _channel = _flags = _echoCode = _sequenceCode = _type = 0;
-  _value   = 0;
+  _value = 0;
 }
 
-boolean KangarooStatus::parse(const byte* data, size_t length)
-{
+bool KangarooStatus::parse(const uint8_t* data, size_t length) {
   KangarooReplyReader parser(data, length);
 
-  if (!parser.tryRead(&_channel)) { return false; }
-  if (!parser.tryRead(&_flags)) { return false; }
-  
-  if (_flags & KANGAROO_STATUS_ECHO_CODE)
-  {
-    if (!parser.tryRead(&_echoCode)) { return false; }
+  if (!parser.tryRead(&_channel)) {
+    return false;
   }
-  
-  if (_flags & KANGAROO_STATUS_SEQUENCE_CODE)
-  {
-    if (!parser.tryRead(&_sequenceCode)) { return false; }
+  if (!parser.tryRead(&_flags)) {
+    return false;
   }
-    
-  if (!parser.tryRead(&_type)) { return false; }
-  
+
+  if (_flags & KANGAROO_STATUS_ECHO_CODE) {
+    if (!parser.tryRead(&_echoCode)) {
+      return false;
+    }
+  }
+
+  if (_flags & KANGAROO_STATUS_SEQUENCE_CODE) {
+    if (!parser.tryRead(&_sequenceCode)) {
+      return false;
+    }
+  }
+
+  if (!parser.tryRead(&_type)) {
+    return false;
+  }
+
   _value = parser.readBitPackedNumber();
-  if (_flags & KANGAROO_STATUS_ERROR)
-  {
-  // Security check: Non-positive numbers should NEVER be received.
-  //                 They are for library-returned errors (<0) and 'None' (=0).
-    if (_value <= 0) { return false; }
+  if (_flags & KANGAROO_STATUS_ERROR) {
+    // Security check: Non-positive numbers should NEVER be received.
+    //                 They are for library-returned errors (<0) and 'None'
+    //                 (=0).
+    if (_value <= 0) {
+      return false;
+    }
   }
 
   return true;

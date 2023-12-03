@@ -17,99 +17,104 @@ USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 #include "KangarooMonitor.hpp"
+
 #include "KangarooChannel.hpp"
 #include "KangarooStatus.hpp"
 #include "KangarooTimeout.hpp"
 
-KangarooMonitor::KangarooMonitor()
-{
-  _state.channel = 0; _state.monitorCode = 0;
+KangarooMonitor::KangarooMonitor() {
+  _state.channel = 0;
+  _state.monitorCode = 0;
 }
 
-KangarooMonitor::KangarooMonitor(KangarooChannel* channel, uint32_t monitorCode)
-{
-  _state.channel = channel; _state.monitorCode = monitorCode;
+KangarooMonitor::KangarooMonitor(KangarooChannel* channel,
+                                 uint32_t monitorCode) {
+  _state.channel = channel;
+  _state.monitorCode = monitorCode;
 }
 
-KangarooStatus KangarooMonitor::status() const
-{
-  return valid() ? _state.channel->_monitoredGetResult : KangarooStatus::createInvalidStatus();
+KangarooStatus KangarooMonitor::status() const {
+  return valid() ? _state.channel->_monitoredGetResult
+                 : KangarooStatus::createInvalidStatus();
 }
 
-boolean KangarooMonitor::valid() const
-{
+bool KangarooMonitor::valid() const {
   return _state.channel && _state.monitorCode == _state.channel->_monitorCode;
 }
 
-KangarooMonitor KangarooMonitor::update()
-{
-  return update(_state.channel->commandTimeout());  
+KangarooMonitor KangarooMonitor::update() {
+  return update(_state.channel->commandTimeout());
 }
 
-KangarooMonitor KangarooMonitor::update(int32_t timeoutMS)
-{
+KangarooMonitor KangarooMonitor::update(int32_t timeoutMS) {
   KangarooTimeout timeout(timeoutMS);
   return update(timeout);
 }
 
-KangarooMonitor KangarooMonitor::update(const KangarooTimeout& timeout)
-{
-  while (valid() && !_state.channel->updateMonitoredResult(timeout, true));
+KangarooMonitor KangarooMonitor::update(const KangarooTimeout& timeout) {
+  while (valid() && !_state.channel->updateMonitoredResult(timeout, true))
+    ;
   return *this;
 }
 
-KangarooMonitor KangarooMonitor::wait(int32_t timeoutMS)
-{
+KangarooMonitor KangarooMonitor::wait(int32_t timeoutMS) {
   KangarooTimeout timeout(timeoutMS);
   return wait(timeout);
 }
 
-KangarooMonitor KangarooMonitor::wait(const KangarooTimeout& timeout)
-{
-  while (!status().done()) { update(timeout); }
+KangarooMonitor KangarooMonitor::wait(const KangarooTimeout& timeout) {
+  while (!status().done()) {
+    update(timeout);
+  }
   return *this;
 }
 
-boolean waitAll(size_t count, KangarooMonitor* monitors[], int32_t timeoutMS)
-{
+bool waitAll(size_t count, KangarooMonitor* monitors[], int32_t timeoutMS) {
   KangarooTimeout timeout(timeoutMS);
   return waitAll(count, monitors, timeout);
 }
 
-boolean waitAll(size_t count, KangarooMonitor* monitors[], const KangarooTimeout& timeout)
-{
-  for (size_t i = 0; i < count; i ++)
-  {
-    if (!monitors[i]) { continue; }
-    
+bool waitAll(size_t count, KangarooMonitor* monitors[],
+             const KangarooTimeout& timeout) {
+  for (size_t i = 0; i < count; i++) {
+    if (!monitors[i]) {
+      continue;
+    }
+
     monitors[i]->wait(timeout);
-    
-    if (monitors[i]->status().timedOut()) { return false; }
+
+    if (monitors[i]->status().timedOut()) {
+      return false;
+    }
   }
-  
+
   return true;
 }
 
-int waitAny(size_t count, KangarooMonitor* monitors[], int32_t timeoutMS)
-{
+int waitAny(size_t count, KangarooMonitor* monitors[], int32_t timeoutMS) {
   KangarooTimeout timeout(timeoutMS);
   return waitAny(count, monitors, timeout);
 }
 
-int waitAny(size_t count, KangarooMonitor* monitors[], const KangarooTimeout& timeout)
-{
-  while (1)
-  {
-    if (timeout.expired()) { return -1; }
-    
-    for (size_t i = 0; i < count; i ++)
-    {
-      if (!monitors[i]) { continue; }
+int waitAny(size_t count, KangarooMonitor* monitors[],
+            const KangarooTimeout& timeout) {
+  while (1) {
+    if (timeout.expired()) {
+      return -1;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+      if (!monitors[i]) {
+        continue;
+      }
 
       monitors[i]->update(timeout);
-      if (monitors[i]->status().timedOut()) { return -1; }
-      if (monitors[i]->status().done    ()) { return  i; }
+      if (monitors[i]->status().timedOut()) {
+        return -1;
+      }
+      if (monitors[i]->status().done()) {
+        return i;
+      }
     }
   }
 }
-

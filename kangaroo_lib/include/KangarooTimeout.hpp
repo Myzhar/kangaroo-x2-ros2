@@ -24,13 +24,13 @@ class KangarooTimeout {
   KANGAROO_INFINITE_TIMEOUT, it cannot expire. \return True if the timeout can
   expire.
   */
-  boolean canExpire() const;
+  bool canExpire() const;
 
   /*!
   Gets whether the timeout has expired.
   \return True if the timeout has expired.
   */
-  boolean expired() const;
+  bool expired() const;
 
   /*!
   Causes the timeout to expire immediately.

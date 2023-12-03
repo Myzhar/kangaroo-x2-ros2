@@ -59,7 +59,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake-mod
 find_package(LibSerial REQUIRED)
 
 set(EXT_LIBS
-    LibSerial_LIBRARY
+    ${LibSerial_LIBRARY}
 )
 
 ##################################################################

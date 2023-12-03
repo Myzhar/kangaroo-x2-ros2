@@ -6,15 +6,15 @@
 class KangarooCRC {
  public:
   void begin();
-  void write(byte data);
-  void write(const byte* data, size_t lengthOfData);
+  void write(uint8_t data);
+  void write(const uint8_t* data, size_t lengthOfData);
   void end();
 
  public:
   inline uint16_t value() const { return _crc; }
   void value(uint16_t crc) { _crc = crc; }
 
-  static uint16_t value(const byte* data, size_t lengthOfData);
+  static uint16_t value(const uint8_t* data, size_t lengthOfData);
 
  private:
   uint16_t _crc = 0;
