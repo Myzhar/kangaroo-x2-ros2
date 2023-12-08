@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   KangarooError err;
   err = drive.start();
   if (err != KANGAROO_NO_ERROR) {
-    std::cerr << "Error starting the drive channel'" << static_cast<int>(err)
+    std::cerr << "Error starting the drive channel '" << static_cast<int>(err)
               << "' !" << std::endl;
     return EXIT_FAILURE;
   }
@@ -35,23 +35,76 @@ int main(int argc, char *argv[]) {
   }
   std::cout << "Channel 'T' started" << std::endl;
 
-  drive.pi(0);
-  turn.pi(0);
+  drive.units(565, 9165000);
+  turn.units(360, 16293);
 
-  for (int i = 0; i < 10; i++) {
-    drive.pi(500);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  long min_d = drive.getMin().value();
+  long max_d = drive.getMax().value();
 
-    turn.pi(500);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  std::cout << "Drive - Min: " << min_d << " / Max: " << max_d << std::endl;
+
+  long min_t = turn.getMin().value();
+  long max_t = turn.getMax().value();
+  std::cout << "Turn - Min: " << min_t << " / Max: " << max_t << std::endl;
+
+  drive.s(0);
+  turn.s(0);
+
+  int32_t speed = 0;
+
+  KangarooMonitor res;
+
+  for (int i = 0; i < 100; i++) {
+    speed += 1;
+    drive.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "D speed: " << drive.getS().value() << std::endl << std::flush;
+  }
+  for (int i = 0; i < 100; i++) {
+    speed -= 1;
+    drive.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "D speed: " << drive.getS().value() << std::endl << std::flush;
+  }
+  for (int i = 0; i < 100; i++) {
+    speed -= 1;
+    drive.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "D speed: " << drive.getS().value() << std::endl << std::flush;
+  }
+  for (int i = 0; i < 100; i++) {
+    speed += 1;
+    drive.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "D speed: " << drive.getS().value() << std::endl << std::flush;
   }
 
-  for (int i = 0; i < 10; i++) {
-    drive.pi(-500);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  drive.s(0);
+  turn.s(0);
 
-    turn.pi(-500);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  for (int i = 0; i < 200; i++) {
+    speed += 10;
+    turn.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "T speed: " << turn.getS().value() << std::endl << std::flush;
+  }
+  for (int i = 0; i < 200; i++) {
+    speed -= 10;
+    turn.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "T speed: " << turn.getS().value() << std::endl << std::flush;
+  }
+  for (int i = 0; i < 200; i++) {
+    speed -= 10;
+    turn.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "T speed: " << turn.getS().value() << std::endl << std::flush;
+  }
+  for (int i = 0; i < 200; i++) {
+    speed += 10;
+    turn.s(speed,-1,KANGAROO_MOVE_NO_DEFAULT_LIMITS).wait(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::cout << "T speed: " << turn.getS().value() << std::endl << std::flush;
   }
 
   return EXIT_SUCCESS;
