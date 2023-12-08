@@ -16,7 +16,7 @@ bool Stream::openSerialPort(std::string& port_name,
         LibSerial::FlowControl::FLOW_CONTROL_NONE,
         LibSerial::Parity::PARITY_NONE, LibSerial::StopBits::STOP_BITS_1);
 
-    _serial->Open(port_name);
+    if (!_serial->IsOpen()) _serial->Open(port_name);
   } catch (LibSerial::OpenFailed& ex) {
     std::cerr << "LibSerial open failed: " << ex.what() << std::endl;
     return false;

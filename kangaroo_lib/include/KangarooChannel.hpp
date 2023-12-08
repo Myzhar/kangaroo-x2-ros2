@@ -32,7 +32,8 @@ class KangarooChannel {
   Mainly this is useful if you have multiple Kangaroos daisy-chained and have
               'Enable multi-Kangaroo mode (shared signal lines).' checked, or if
   your particular application would be clearer if for instance the channels were
-  named 'X', 'Y', and 'Z'. \param address The Packet Serial address of the
+  named 'X', 'Y', and 'Z'.
+  \param address The Packet Serial address of the
   controller. Normally this can be left at its default. If you daisy-chain the
   TX/S1 line between your Kangaroo and a Sabertooth or SyRen motor driver set in
   Packet Serial, however, make sure they aren't both using the same address.
@@ -57,11 +58,12 @@ class KangarooChannel {
  public:
   /*!
   Starts the channel. Also, the Kangaroo LED will shine brightly for a third of
-  a second. \param onlyIfNecessary Whether the channel should only be started if
+  a second.
+  \param onlyIfNecessary Whether the channel should only be started if
   necessary. If true, and it is already started, it will not be restarted. This
-  option requires 2014-11-13 or newer firmware. \return A KangarooError. Most
-  commonly, this will be KANGAROO_NO_ERROR if the channel does not require
-  homing, or KANGAROO_NOT_HOMED if it does.
+  option requires 2014-11-13 or newer firmware.
+  \return A KangarooError. Most commonly, this will be KANGAROO_NO_ERROR if the
+  channel does not require homing, or KANGAROO_NOT_HOMED if it does.
   */
   KangarooError start(bool onlyIfNecessary = false);
 
@@ -69,12 +71,12 @@ class KangarooChannel {
   Sets custom units for the channel.
   This command may be called after you start the channel but before you home it.
   If you do not set custom units, the units you have set up in DEScribe will be
-  used. If you haven't set any, machine units will be used. \param desiredUnits
-  The amount in your units that correspond to the specified amount of machine
-  units. \param machineUnits The amount of machine units (millivolts or lines)
-  corresponding to the specified amount in your units. \return A KangarooError.
-          Most commonly, this will be KANGAROO_NO_ERROR if the channel does not
-  require homing, or KANGAROO_NOT_HOMED if it does.
+  used. If you haven't set any, machine units will be used.
+  \param desiredUnits The amount in your units that correspond to the specified
+  amount of machine units. \param machineUnits The amount of machine units
+  (millivolts or lines) corresponding to the specified amount in your units.
+  \return A KangarooError. Most commonly, this will be KANGAROO_NO_ERROR if the
+  channel does not require homing, or KANGAROO_NOT_HOMED if it does.
   */
   KangarooError units(int32_t desiredUnits, int32_t machineUnits);
 
@@ -153,10 +155,11 @@ class KangarooChannel {
   This is useful for cruise control: a negative increment will slow down,
                                      a positive increment will speed up,
                                      and a zero increment will hold the current
-  speed. 2014-11-13 or newer firmware is required for this command. \param
-  speedIncrement    The amount to increment the current speed by. \param
-  speedRampingLimit The speed ramping limit for the move. \param flags Modifiers
-  for the move command. \return A KangarooMonitor for tracking the move request.
+  speed. 2014-11-13 or newer firmware is required for this command.
+  \param speedIncrement    The amount to increment the current speed by.
+  \param speedRampingLimit The speed ramping limit for the move.
+  \param flags Modifiers for the move command.
+  \return A KangarooMonitor for tracking the move request.
   */
   KangarooMonitor ssi(int32_t speedIncrement,
                       int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
@@ -167,7 +170,7 @@ class KangarooChannel {
   Issues a 'get' request.
   \param type The type of the 'get' request.
   \param flags Flags modifying the 'get' request.
-  \return A KangarooStatus object describing the response.
+  \return A \ref KangarooStatus object describing the response.
   */
   KangarooStatus get(KangarooGetType type,
                      KangarooGetFlags flags = KANGAROO_GET_DEFAULT);
@@ -175,7 +178,7 @@ class KangarooChannel {
   /*!
   Gets the absolute position.
   \param flags Flags modifying the 'get' request.
-  \return A KangarooStatus object describing the position.
+  \return A \ref KangarooStatus object describing the position.
   */
   inline KangarooStatus getP(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETP, flags);
@@ -183,8 +186,9 @@ class KangarooChannel {
 
   /*!
   Gets the incremental position (relative to the position when the last command
-  was issued). \param flags Flags modifying the 'get' request. \return A
-  KangarooStatus object describing the position.
+  was issued).
+  \param flags Flags modifying the 'get' request.
+  \return A \ref KangarooStatus object describing the position.
   */
   inline KangarooStatus getPI(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETPI, flags);
@@ -194,7 +198,7 @@ class KangarooChannel {
   Gets the setpoint position.
   2014-11-13 or newer firmware is required for this request.
   \param flags Flags modifying the 'get' request.
-  \return A KangarooStatus object describing the position.
+  \return A \ref KangarooStatus object describing the position.
   */
   inline KangarooStatus getPS(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETPS, flags);
@@ -203,7 +207,7 @@ class KangarooChannel {
   /*!
   Gets the absolute speed (positive or negative depending on direction).
   \param flags Flags modifying the 'get' request.
-  \return A KangarooStatus object describing the speed.
+  \return A \ref KangarooStatus object describing the speed.
   */
   inline KangarooStatus getS(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETS, flags);
@@ -211,8 +215,9 @@ class KangarooChannel {
 
   /*!
   Gets the incremental speed (relative to the speed when the last command was
-  issued). \param flags Flags modifying the 'get' request. \return A
-  KangarooStatus object describing the speed.
+  issued).
+  \param flags Flags modifying the 'get' request.
+  \return A \ref KangarooStatus object describing the speed.
   */
   inline KangarooStatus getSI(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETSI, flags);
@@ -222,7 +227,7 @@ class KangarooChannel {
   Gets the setpoint speed.
   2014-11-13 or newer firmware is required for this request.
   \param flags Flags modifying the 'get' request.
-  \return A KangarooStatus object describing the speed.
+  \return A \ref KangarooStatus object describing the speed.
   */
   inline KangarooStatus getSS(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETSS, flags);
@@ -230,8 +235,9 @@ class KangarooChannel {
 
   /*!
   Gets the minimum position. This corresponds to DEScribe's Nominal Travel
-  minimum. \param flags Flags modifying the 'get' request. \return A
-  KangarooStatus object describing the limit.
+  minimum.
+  \param flags Flags modifying the 'get' request.
+  \return A \ref KangarooStatus object describing the limit.
   */
   inline KangarooStatus getMin(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETMIN, flags);
@@ -239,8 +245,9 @@ class KangarooChannel {
 
   /*!
   Gets the maximum position. This corresponds to DEScribe's Nominal Travel
-  maximum. \param flags Flags modifying the 'get' request. \return A
-  KangarooStatus object describing the limit.
+  maximum.
+  \param flags Flags modifying the 'get' request.
+  \return A \ref KangarooStatus object describing the limit.
   */
   inline KangarooStatus getMax(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
     return get(KANGAROO_GETMAX, flags);
