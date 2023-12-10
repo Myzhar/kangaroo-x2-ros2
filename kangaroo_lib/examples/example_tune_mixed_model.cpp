@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   err = drive.systemCommand(KANGAROO_SYS_TUNE_ENTER_MODE, false, enterModeParams, 1);
 
   if(err!=KANGAROO_NO_ERROR) {
-    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << static_cast<int>(err) << std::endl;
+    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   int32_t disableChannelsParams[1] = { 0 };
   err = drive.systemCommand(KANGAROO_SYS_TUNE_SET_DISABLED_CHANNELS, false, disableChannelsParams, 1);
   if(err!=KANGAROO_NO_ERROR) {
-    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << static_cast<int>(err) << std::endl;
+    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   int32_t goParams[0];
   err = drive.systemCommand(KANGAROO_SYS_TUNE_GO, false, goParams, 0);
   if(err!=KANGAROO_NO_ERROR) {
-    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << static_cast<int>(err) << std::endl;
+    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
     return EXIT_FAILURE;
   }
 

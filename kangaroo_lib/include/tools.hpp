@@ -2,6 +2,7 @@
 #define TOOLS_HPP
 
 #include <chrono>
+#include <string>
 
 #include "types.hpp"
 
@@ -16,5 +17,7 @@ const T& constrain(const T& x, const T& a, const T& b) {
 }
 
 uint64_t millis();
+
+std::string toString(KangarooError err);
 
 #endif  // TOOLS_HPP

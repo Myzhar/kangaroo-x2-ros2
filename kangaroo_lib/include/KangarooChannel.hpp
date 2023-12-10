@@ -73,8 +73,9 @@ class KangarooChannel {
   If you do not set custom units, the units you have set up in DEScribe will be
   used. If you haven't set any, machine units will be used.
   \param desiredUnits The amount in your units that correspond to the specified
-  amount of machine units. \param machineUnits The amount of machine units
-  (millivolts or lines) corresponding to the specified amount in your units.
+  amount of machine units. 
+  \param machineUnits The amount of machine units (millivolts or lines) corresponding 
+  to the specified amount in your units.
   \return A KangarooError. Most commonly, this will be KANGAROO_NO_ERROR if the
   channel does not require homing, or KANGAROO_NOT_HOMED if it does.
   */

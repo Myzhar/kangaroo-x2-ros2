@@ -21,16 +21,14 @@ int main(int argc, char *argv[]) {
   KangarooError err;
   err = drive.start();
   if (err != KANGAROO_NO_ERROR) {
-    std::cerr << "Error starting the drive channel '" << static_cast<int>(err)
-              << "' !" << std::endl;
+    std::cerr << "Error starting the drive channel: " << toString(err) << std::endl;
     return EXIT_FAILURE;
   }
   std::cout << "Channel 'D' started" << std::endl;
 
   err = turn.start();
   if (err != KANGAROO_NO_ERROR) {
-    std::cerr << "Error starting the turn channel'" << static_cast<int>(err)
-              << "' !" << std::endl;
+    std::cerr << "Error starting the turn channel: " << toString(err) << std::endl;
     return EXIT_FAILURE;
   }
   std::cout << "Channel 'T' started" << std::endl;
