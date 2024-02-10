@@ -18,7 +18,7 @@ class KangarooSerial {
   Constructs a KangarooSerial object.
   \param port The serial port the motion controller is on.
   */
-  KangarooSerial(Stream& port);
+  explicit KangarooSerial(Stream& port);
 
  public:
   /*!

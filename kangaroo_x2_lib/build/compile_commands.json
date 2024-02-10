@@ -1,0 +1,79 @@
+[
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/tools.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/tools.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/tools.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/Stream.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/Stream.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/Stream.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooCRC.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooCRC.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooCRC.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooCommandWriter.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooCommandWriter.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooCommandWriter.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooReplyReceiver.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooReplyReceiver.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooReplyReceiver.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooReplyReader.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooReplyReader.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooReplyReader.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooStatus.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooStatus.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooStatus.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooSerial.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooSerial.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooSerial.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooTimeout.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooTimeout.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooTimeout.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooChannel.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooChannel.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooChannel.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I/usr/include/libserial -I../include  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o CMakeFiles/kangaroo_x2_lib.dir/src/KangarooMonitor.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooMonitor.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/src/KangarooMonitor.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I../include -I/usr/include/libserial  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o examples/CMakeFiles/example_tune_mixed_model.dir/example_tune_mixed_model.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/examples/example_tune_mixed_model.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/examples/example_tune_mixed_model.cpp"
+},
+
+{
+  "directory": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+  "command": "/usr/bin/c++   -I../include -I/usr/include/libserial  -g   -Werror=return-type -Wall -Wextra -Wpedantic -std=gnu++17 -o examples/CMakeFiles/example_mixed_model.dir/example_mixed_model.cpp.o -c /home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/examples/example_mixed_model.cpp",
+  "file": "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/examples/example_mixed_model.cpp"
+}
+]

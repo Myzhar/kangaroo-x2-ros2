@@ -4,28 +4,14 @@ project(kangaroo_x2_lib)
 ##################################################################
 # Project Options
 option(BUILD_TESTING "Build tests" OFF)
-option(STATIC_CHECK "Run static check" OFF)
 option(BUILD_DEMO "Build demos" ON)
 
 ## Generate symbols for IDE indexer
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-if(STATIC_CHECK)
-    find_program(CPPCHECK cppcheck)
-    if(CPPCHECK)
-        message(STATUS "Found cppcheck")
-        set(CMAKE_CXX_CPPCHECK cppcheck;--std=c++11;--enable=all)
-    endif() 
-endif()
 ##################################################################
 
 ##################################################################
 # Modes
-
-# Default to C99
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
 
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
@@ -51,6 +37,8 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     message(STATUS " * Debug Mode")
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
+
+add_definitions(-Werror=return-type)
 ##################################################################
 
 ##################################################################
@@ -107,10 +95,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-    ${LibSerial_INCLUDE_DIR}
+    $<BUILD_INTERFACE:${LibSerial_INCLUDE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    PRIVATE src
 )
 ##################################################################
 

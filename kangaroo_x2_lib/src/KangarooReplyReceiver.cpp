@@ -16,22 +16,35 @@ NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE
 USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "KangarooSerial.hpp"
-
 #include "KangarooReplyReceiver.hpp"
 
-KangarooSerial::KangarooSerial(Stream& port) : _port(port) {}
+#include <string.h>
 
-bool KangarooSerial::tryReceivePacket() {
-  while (1) {
-    uint8_t data;
-    if (!port().readByte(data)) {
-      return false;
-    }
+#include "KangarooCRC.hpp"
 
-    _receiver.read(data);
-    if (_receiver.ready()) {
-      return true;
+KangarooReplyReceiver::KangarooReplyReceiver() {
+  memset(_data, 0, sizeof(_data));
+  reset();
+}
+
+void KangarooReplyReceiver::read_byte(uint8_t data) {
+  if (data >= 128 || _ready) {
+    reset();
+  }
+  if (_length < KANGAROO_COMMAND_MAX_BUFFER_LENGTH) {
+    _data[_length++] = data;
+  }
+
+  if (_length >= 5 && _data[0] >= 128) {
+    if (_length - 5 == _data[2]) {
+      if (KangarooCRC::value(_data, _length) == KANGAROO_CRC_GOOD_VALUE) {
+        _ready = true;
+      }
     }
   }
+}
+
+void KangarooReplyReceiver::reset() {
+  _length = 0;
+  _ready = false;
 }

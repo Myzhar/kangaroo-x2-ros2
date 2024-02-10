@@ -1,0 +1,17 @@
+# ninja log v5
+0	11	1707571764776480583	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooCRC.cpp.o	ecf5e7f721e8fbbf
+0	11	1707571764776480583	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooReplyReader.cpp.o	50b69a98b05196b5
+0	11	1707571764776480583	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooStatus.cpp.o	7a6544fab259a651
+0	15	1707571764780480584	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooReplyReceiver.cpp.o	5a75539914993b20
+0	25	1707571764788480587	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooMonitor.cpp.o	9a41f3faa5512ae4
+0	98	1707571764860480607	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooTimeout.cpp.o	ea675644336274fe
+0	108	1707571764872480610	CMakeFiles/kangaroo_x2_lib.dir/src/tools.cpp.o	57916ac0589618ae
+0	164	1707571764928480627	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooSerial.cpp.o	c242761387d2bbb5
+0	184	1707571764948480633	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooCommandWriter.cpp.o	a5a5bf60fd3ca48c
+0	209	1707571764972480639	examples/CMakeFiles/example_tune_mixed_model.dir/example_tune_mixed_model.cpp.o	5bf0f5f3f71f6ecc
+1	221	1707571764984480643	examples/CMakeFiles/example_mixed_model.dir/example_mixed_model.cpp.o	d2ea46d901228b25
+0	221	1707571764984480643	CMakeFiles/kangaroo_x2_lib.dir/src/Stream.cpp.o	ecafe35e3f3ede79
+0	232	1707571764996480646	CMakeFiles/kangaroo_x2_lib.dir/src/KangarooChannel.cpp.o	2778f94b1dbb064
+232	254	1707571765016480652	libkangaroo_x2_lib.a	b39f8636f0b6890a
+254	287	1707571765052480662	examples/example_tune_mixed_model	904dc6833f829151
+254	287	1707571765052480662	examples/example_mixed_model	71a89e481f739cac

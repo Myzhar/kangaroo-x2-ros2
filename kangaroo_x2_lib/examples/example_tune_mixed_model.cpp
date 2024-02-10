@@ -8,6 +8,9 @@
 #define TUNE_MODE_NUMBER 1
 
 int main(int argc, char *argv[]) {
+  (void)argc;
+  (void)argv;
+
   std::string ser_port_name = "/dev/ttyUSB0";
   Stream stream;
   if (!stream.openSerialPort(ser_port_name, LibSerial::BaudRate::BAUD_115200)) {
@@ -43,8 +46,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Begin the tune.
-  int32_t goParams[0];
-  err = drive.systemCommand(KANGAROO_SYS_TUNE_GO, false, goParams, 0);
+  err = drive.systemCommand(KANGAROO_SYS_TUNE_GO, false, nullptr, 0);
   if(err!=KANGAROO_NO_ERROR) {
     std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
     return EXIT_FAILURE;

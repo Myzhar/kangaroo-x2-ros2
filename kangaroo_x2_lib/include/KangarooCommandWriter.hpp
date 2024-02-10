@@ -30,7 +30,7 @@ class KangarooCommandWriter {
                             size_t lengthOfData);
 
  private:
-  uint8_t _address, _command;
+  //uint8_t _address, _command;
   size_t _length;
   uint8_t _data[KANGAROO_COMMAND_MAX_DATA_LENGTH];
 };

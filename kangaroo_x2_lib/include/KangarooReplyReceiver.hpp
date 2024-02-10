@@ -17,7 +17,7 @@ class KangarooReplyReceiver {
 
  public:
   inline bool ready() const { return _ready; }
-  void read(uint8_t data);
+  void read_byte(uint8_t data);
   void reset();
 
  private:

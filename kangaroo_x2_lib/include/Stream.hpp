@@ -1,7 +1,7 @@
 #ifndef STREAM_HPP
 #define STREAM_HPP
 
-#include <SerialPort.h>
+#include "SerialPort.h"
 
 #include <atomic>
 #include <string>

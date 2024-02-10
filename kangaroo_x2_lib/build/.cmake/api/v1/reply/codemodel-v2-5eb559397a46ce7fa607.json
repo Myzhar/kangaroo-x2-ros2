@@ -1,0 +1,96 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "examples",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "examples",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "kangaroo_x2_lib",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "example_mixed_model::@714eac15f71a94114fdf",
+					"jsonFile" : "target-example_mixed_model-Debug-d668669aa72a63c0b9db.json",
+					"name" : "example_mixed_model",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "example_tune_mixed_model::@714eac15f71a94114fdf",
+					"jsonFile" : "target-example_tune_mixed_model-Debug-995e34a6d4823151d435.json",
+					"name" : "example_tune_mixed_model",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "kangaroo_x2_lib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-kangaroo_x2_lib-Debug-bab58d1d2dcc195aafc7.json",
+					"name" : "kangaroo_x2_lib",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build",
+		"source" : "/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

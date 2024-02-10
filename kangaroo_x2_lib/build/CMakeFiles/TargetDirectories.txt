@@ -1,0 +1,15 @@
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/install/strip.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/install/local.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/install.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/list_install_components.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/rebuild_cache.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/edit_cache.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/CMakeFiles/kangaroo_x2_lib.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/install/strip.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/install/local.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/edit_cache.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/example_tune_mixed_model.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/install.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/list_install_components.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/rebuild_cache.dir
+/home/walter/Documents/Walter/MyzharBot_v5/devel/ros2_ws/src/kangaroo-x2-ros2/kangaroo_x2_lib/build/examples/CMakeFiles/example_mixed_model.dir
