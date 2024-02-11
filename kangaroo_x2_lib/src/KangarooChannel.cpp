@@ -85,42 +85,43 @@ KangarooMonitor KangarooChannel::home(bool onlyIfNecessary) {
                              : KANGAROO_MOVE_DEFAULT);
 }
 
-KangarooMonitor KangarooChannel::p(int32_t position, int32_t speedLimit,
-                                   KangarooMoveFlags flags) {
+KangarooMonitor KangarooChannel::setPos(int32_t position, int32_t speedLimit,
+                                        KangarooMoveFlags flags) {
   return motion(0x01, position, 0x02, speedLimit, 0, KANGAROO_UNSPECIFIED_LIMIT,
                 flags);
 }
 
-KangarooMonitor KangarooChannel::pi(int32_t positionIncrement,
-                                    int32_t speedLimit,
-                                    KangarooMoveFlags flags) {
+KangarooMonitor KangarooChannel::incrPos(int32_t positionIncrement,
+                                         int32_t speedLimit,
+                                         KangarooMoveFlags flags) {
   return motion(0x41, positionIncrement, 0x02, speedLimit, 0,
                 KANGAROO_UNSPECIFIED_LIMIT, flags);
 }
 
-KangarooMonitor KangarooChannel::psi(int32_t positionIncrement,
-                                     int32_t speedLimit,
-                                     KangarooMoveFlags flags) {
+KangarooMonitor KangarooChannel::incrPosRel(int32_t positionIncrement,
+                                            int32_t speedLimit,
+                                            KangarooMoveFlags flags) {
   return motion(0x41, positionIncrement, 0x02, speedLimit, 0,
                 KANGAROO_UNSPECIFIED_LIMIT, flags);
 }
 
-KangarooMonitor KangarooChannel::s(int32_t speed, int32_t speedRampingLimit,
-                                   KangarooMoveFlags flags) {
+KangarooMonitor KangarooChannel::setSpeed(int32_t speed,
+                                          int32_t speedRampingLimit,
+                                          KangarooMoveFlags flags) {
   return motion(0x02, speed, 0x03, speedRampingLimit, 0,
                 KANGAROO_UNSPECIFIED_LIMIT, flags);
 }
 
-KangarooMonitor KangarooChannel::si(int32_t speedIncrement,
-                                    int32_t speedRampingLimit,
-                                    KangarooMoveFlags flags) {
+KangarooMonitor KangarooChannel::incrSpeed(int32_t speedIncrement,
+                                           int32_t speedRampingLimit,
+                                           KangarooMoveFlags flags) {
   return motion(0x42, speedIncrement, 0x03, speedRampingLimit, 0,
                 KANGAROO_UNSPECIFIED_LIMIT, flags);
 }
 
-KangarooMonitor KangarooChannel::ssi(int32_t speedIncrement,
-                                     int32_t speedRampingLimit,
-                                     KangarooMoveFlags flags) {
+KangarooMonitor KangarooChannel::incrSpeedRel(int32_t speedIncrement,
+                                              int32_t speedRampingLimit,
+                                              KangarooMoveFlags flags) {
   return motion(0x42, speedIncrement, 0x03, speedRampingLimit, 0,
                 KANGAROO_UNSPECIFIED_LIMIT, flags);
 }
@@ -147,8 +148,8 @@ KangarooMonitor KangarooChannel::motion(uint8_t motionType, int32_t motionValue,
   return set(KANGAROO_CMD_MOVE, contents, flags);
 }
 
-KangarooStatus KangarooChannel::get(KangarooGetType type,
-                                    KangarooGetFlags flags) {
+KangarooStatus KangarooChannel::getVal(KangarooGetType type,
+                                       KangarooGetFlags flags) {
   KangarooTimeout timeout(commandTimeout());
 
   KangarooStatus initialStatus;
