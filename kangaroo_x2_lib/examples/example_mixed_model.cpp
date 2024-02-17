@@ -14,16 +14,16 @@ int main(int argc, char *argv[]) {
   std::cout << std::endl;
 
   // ----> Units setup calculation
-  float rad = 90.0f;
+  float radius = 90.0f;
   float baseline = 320.0f;
   uint32_t enc_lines = 100;
   float gear_ratio = 18.33333333333333333333f;
   uint32_t out_d_dist, out_d_lines, out_t_lines;
-  calculateDiffDriveUnits(rad, baseline, enc_lines, gear_ratio, out_d_dist,
+  calculateDiffDriveUnits(radius, baseline, enc_lines, gear_ratio, out_d_dist,
                           out_d_lines, out_t_lines);
 
   std::cout << "Robot Configuration: " << std::endl;
-  std::cout << " * Wheel radius: " << rad << " mm" << std::endl;
+  std::cout << " * Wheel radius: " << radius << " mm" << std::endl;
   std::cout << " * Wheel distance: " << baseline << " mm" << std::endl;
   std::cout << " * Encoder lines: " << enc_lines << std::endl;
   std::cout << " * Gear ratio: " << gear_ratio << ":1" << std::endl;
