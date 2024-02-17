@@ -73,11 +73,11 @@ class KangarooChannel {
   If you do not set custom units, the units you have set up in DEScribe will be
   used. If you haven't set any, machine units will be used.
   \param desiredUnits The amount in your units that correspond to the specified
-  amount of machine units. 
-  \param machineUnits The amount of machine units (millivolts or lines) corresponding 
-  to the specified amount in your units.
-  \return A KangarooError. Most commonly, this will be KANGAROO_NO_ERROR if the
-  channel does not require homing, or KANGAROO_NOT_HOMED if it does.
+  amount of machine units.
+  \param machineUnits The amount of machine units (millivolts or lines)
+  corresponding to the specified amount in your units. \return A KangarooError.
+  Most commonly, this will be KANGAROO_NO_ERROR if the channel does not require
+  homing, or KANGAROO_NOT_HOMED if it does.
   */
   KangarooError units(int32_t desiredUnits, int32_t machineUnits);
 
@@ -100,9 +100,9 @@ class KangarooChannel {
   \param flags             Modifiers for the move command.
   \return A KangarooMonitor for tracking the move request.
   */
-  KangarooMonitor p(int32_t position,
-                    int32_t speedLimit = KANGAROO_UNSPECIFIED_LIMIT,
-                    KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
+  KangarooMonitor setPos(int32_t position,
+                         int32_t speedLimit = KANGAROO_UNSPECIFIED_LIMIT,
+                         KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
 
   /*!
   Makes an incremental move, relative to where you are right now.
@@ -112,9 +112,9 @@ class KangarooChannel {
   \param flags             Modifiers for the move command.
   \return A KangarooMonitor for tracking the move request.
   */
-  KangarooMonitor pi(int32_t positionIncrement,
-                     int32_t speedLimit = KANGAROO_UNSPECIFIED_LIMIT,
-                     KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
+  KangarooMonitor incrPos(int32_t positionIncrement,
+                          int32_t speedLimit = KANGAROO_UNSPECIFIED_LIMIT,
+                          KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
 
   /*!
   Makes an incremental move, relative to the current position setpoint.
@@ -125,9 +125,9 @@ class KangarooChannel {
   \param flags             Modifiers for the move command.
   \return A KangarooMonitor for tracking the move request.
   */
-  KangarooMonitor psi(int32_t positionIncrement,
-                      int32_t speedLimit = KANGAROO_UNSPECIFIED_LIMIT,
-                      KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
+  KangarooMonitor incrPosRel(int32_t positionIncrement,
+                             int32_t speedLimit = KANGAROO_UNSPECIFIED_LIMIT,
+                             KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
 
   /*!
   Moves at a particular speed.
@@ -136,9 +136,9 @@ class KangarooChannel {
   \param flags             Modifiers for the move command.
   \return A KangarooMonitor for tracking the move request.
   */
-  KangarooMonitor s(int32_t speed,
-                    int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
-                    KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
+  KangarooMonitor setSpeed(
+      int32_t speed, int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
+      KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
 
   /*!
   Moves at a particular speed, incremental from the current speed.
@@ -147,9 +147,10 @@ class KangarooChannel {
   \param flags             Modifiers for the move command.
   \return A KangarooMonitor for tracking the move request.
   */
-  KangarooMonitor si(int32_t speedIncrement,
-                     int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
-                     KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
+  KangarooMonitor incrSpeed(
+      int32_t speedIncrement,
+      int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
+      KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
 
   /*!
   Moves at a particular speed, incremental from the current speed setpoint.
@@ -162,9 +163,10 @@ class KangarooChannel {
   \param flags Modifiers for the move command.
   \return A KangarooMonitor for tracking the move request.
   */
-  KangarooMonitor ssi(int32_t speedIncrement,
-                      int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
-                      KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
+  KangarooMonitor incrSpeedRel(
+      int32_t speedIncrement,
+      int32_t speedRampingLimit = KANGAROO_UNSPECIFIED_LIMIT,
+      KangarooMoveFlags flags = KANGAROO_MOVE_DEFAULT);
 
  public:
   /*!
@@ -173,16 +175,16 @@ class KangarooChannel {
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the response.
   */
-  KangarooStatus get(KangarooGetType type,
-                     KangarooGetFlags flags = KANGAROO_GET_DEFAULT);
+  KangarooStatus getVal(KangarooGetType type,
+                        KangarooGetFlags flags = KANGAROO_GET_DEFAULT);
 
   /*!
   Gets the absolute position.
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the position.
   */
-  inline KangarooStatus getP(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETP, flags);
+  inline KangarooStatus getPos(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
+    return getVal(KANGAROO_GETP, flags);
   }
 
   /*!
@@ -191,8 +193,9 @@ class KangarooChannel {
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the position.
   */
-  inline KangarooStatus getPI(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETPI, flags);
+  inline KangarooStatus getIncrPos(
+      KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
+    return getVal(KANGAROO_GETPI, flags);
   }
 
   /*!
@@ -201,8 +204,9 @@ class KangarooChannel {
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the position.
   */
-  inline KangarooStatus getPS(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETPS, flags);
+  inline KangarooStatus getSetPointPos(
+      KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
+    return getVal(KANGAROO_GETPS, flags);
   }
 
   /*!
@@ -210,8 +214,9 @@ class KangarooChannel {
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the speed.
   */
-  inline KangarooStatus getS(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETS, flags);
+  inline KangarooStatus getSpeed(
+      KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
+    return getVal(KANGAROO_GETS, flags);
   }
 
   /*!
@@ -220,8 +225,8 @@ class KangarooChannel {
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the speed.
   */
-  inline KangarooStatus getSI(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETSI, flags);
+  inline KangarooStatus getIncrSpeed(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
+    return getVal(KANGAROO_GETSI, flags);
   }
 
   /*!
@@ -230,8 +235,8 @@ class KangarooChannel {
   \param flags Flags modifying the 'get' request.
   \return A \ref KangarooStatus object describing the speed.
   */
-  inline KangarooStatus getSS(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETSS, flags);
+  inline KangarooStatus getSetPointSpeed(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
+    return getVal(KANGAROO_GETSS, flags);
   }
 
   /*!
@@ -241,7 +246,7 @@ class KangarooChannel {
   \return A \ref KangarooStatus object describing the limit.
   */
   inline KangarooStatus getMin(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETMIN, flags);
+    return getVal(KANGAROO_GETMIN, flags);
   }
 
   /*!
@@ -251,36 +256,7 @@ class KangarooChannel {
   \return A \ref KangarooStatus object describing the limit.
   */
   inline KangarooStatus getMax(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return get(KANGAROO_GETMAX, flags);
-  }
-
- public:
-  // While the following calls violate the standard Arduino casing, they sure
-  // are nicer to type. The contrast between 'p' and 'getP' may confuse as well,
-  // so we include these to make life easier for everyone.
-  inline KangarooStatus getp(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getP(flags);
-  }
-  inline KangarooStatus getpi(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getPI(flags);
-  }
-  inline KangarooStatus getps(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getPS(flags);
-  }
-  inline KangarooStatus gets(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getS(flags);
-  }
-  inline KangarooStatus getsi(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getSI(flags);
-  }
-  inline KangarooStatus getss(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getSS(flags);
-  }
-  inline KangarooStatus getmin(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getMin(flags);
-  }
-  inline KangarooStatus getmax(KangarooGetFlags flags = KANGAROO_GET_DEFAULT) {
-    return getMax(flags);
+    return getVal(KANGAROO_GETMAX, flags);
   }
 
  public:

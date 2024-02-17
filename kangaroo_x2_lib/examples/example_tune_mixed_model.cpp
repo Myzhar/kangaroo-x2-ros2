@@ -28,35 +28,43 @@ int main(int argc, char *argv[]) {
 
   KangarooError err;
 
-    // Enter the desired tune mode.
-  int32_t enterModeParams[1] = { TUNE_MODE_NUMBER };
-  err = drive.systemCommand(KANGAROO_SYS_TUNE_ENTER_MODE, false, enterModeParams, 1);
+  // Enter the desired tune mode.
+  int32_t enterModeParams[1] = {TUNE_MODE_NUMBER};
+  err = drive.systemCommand(KANGAROO_SYS_TUNE_ENTER_MODE, false,
+                            enterModeParams, 1);
 
-  if(err!=KANGAROO_NO_ERROR) {
-    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
+  if (err != KANGAROO_NO_ERROR) {
+    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err)
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   // Set the disabled channel bitmask to 0 (tune all channels).
-  int32_t disableChannelsParams[1] = { 0 };
-  err = drive.systemCommand(KANGAROO_SYS_TUNE_SET_DISABLED_CHANNELS, false, disableChannelsParams, 1);
-  if(err!=KANGAROO_NO_ERROR) {
-    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
+  int32_t disableChannelsParams[1] = {0};
+  err = drive.systemCommand(KANGAROO_SYS_TUNE_SET_DISABLED_CHANNELS, false,
+                            disableChannelsParams, 1);
+  if (err != KANGAROO_NO_ERROR) {
+    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err)
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   // Begin the tune.
   err = drive.systemCommand(KANGAROO_SYS_TUNE_GO, false, nullptr, 0);
-  if(err!=KANGAROO_NO_ERROR) {
-    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err) << std::endl;
+  if (err != KANGAROO_NO_ERROR) {
+    std::cerr << "KANGAROO_SYS_TUNE_ENTER_MODE error: " << toString(err)
+              << std::endl;
     return EXIT_FAILURE;
   }
 
-  while(1)
-  {
-     std::cout << "Speed: " << drive.getS().value() << " " << turn.getS().value() << std::endl << std::flush;
-     std::cout << "Pos: " << drive.getP().value() << " " << turn.getP().value() << std::endl << std::flush;
-     std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  while (1) {
+    std::cout << "Speed: " << drive.getSpeed().value() << " "
+              << turn.getSpeed().value() << std::endl
+              << std::flush;
+    std::cout << "Pos: " << drive.getPos().value() << " "
+              << turn.getPos().value() << std::endl
+              << std::flush;
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
   return EXIT_SUCCESS;

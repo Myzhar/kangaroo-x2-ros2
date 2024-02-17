@@ -75,7 +75,7 @@ class KangarooMonitor {
   KangarooMonitor(KangarooChannel* channel, uint32_t monitorCode);
 
  private:
-  struct {
+  struct State {
     KangarooChannel* channel;
     uint32_t monitorCode;
   } _state;

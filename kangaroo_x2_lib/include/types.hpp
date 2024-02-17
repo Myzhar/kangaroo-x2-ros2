@@ -165,7 +165,7 @@ enum KangarooSystemCommand {
 
                  Tuning has an automatic serial timeout for safety reasons.
                  You must continually send packets or it will abort.
-               KangarooChannel::getP() in a loop does the job.
+               KangarooChannel::getPos() in a loop does the job.
 
                  Do not expect a reply from this command. */
   KANGAROO_SYS_TUNE_ABORT =

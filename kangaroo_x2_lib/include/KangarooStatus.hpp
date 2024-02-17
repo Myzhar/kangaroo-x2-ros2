@@ -7,7 +7,7 @@
 \class KangarooStatus
 \brief Stores the response to a status request.
 
-Returned by KangarooChannel::getP(), KangarooMonitor::status(), and others.
+Returned by KangarooChannel::getPos(), KangarooMonitor::status(), and others.
 */
 class KangarooStatus {
  public:
@@ -52,9 +52,9 @@ class KangarooStatus {
  public:
   /*!
   Gets whether a recently-requested command is still executing.
-  For example, KangarooChannel::p() is busy while the channel is getting into
-  position, and KangarooChannel::home() is busy while the channel is homing.
-  \return True if the channel is busy.
+  For example, KangarooChannel::setPos() is busy while the channel is getting
+  into position, and KangarooChannel::home() is busy while the channel is
+  homing. \return True if the channel is busy.
   */
   bool busy() const { return 0 != (flags() & KANGAROO_STATUS_BUSY); }
 
@@ -69,8 +69,8 @@ class KangarooStatus {
 
   /*!
   Gets whether a recently-requested command has completed execution.
-  For example, KangarooChannel::p() is done when the channel is in position.
-  \return True if the command is done.
+  For example, KangarooChannel::setPos() is done when the channel is in
+  position. \return True if the command is done.
   */
   bool done() const { return !busy(); }
 
