@@ -18,4 +18,6 @@ The library has been created by adapting the code of "[Arduino Library for Kanga
 **Turn units: `T = R*L*pi*B/F`** -> number of encoder lines counted to turn of 360°
 * C++ code: `turn.units(360, T);`
 
+The function `calculateDiffDriveUnits` in `tools.hpp` automatically applies these formulas to setup the controller.
+
 

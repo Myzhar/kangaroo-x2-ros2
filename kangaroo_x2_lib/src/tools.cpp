@@ -1,5 +1,7 @@
 #include "tools.hpp"
 
+#include <math.h>
+
 uint64_t millis() {
   auto now = std::chrono::system_clock::now();
   auto duration = now.time_since_epoch();
@@ -44,4 +46,25 @@ std::string toString(KangarooError err) {
     default:
       return std::string("unknown error code");
   }
+}
+
+bool calculateDiffDriveUnits(const float wheel_radius, const float wheel_dist,
+                             const uint32_t encoder_lines,
+                             const float gear_ratio_mul,
+                             uint32_t& out_drive_dist,
+                             uint32_t& out_drive_lines,
+                             uint32_t& out_turn_lines) {
+  // ----> Forwarding
+  float F = 2.0f * M_PI * wheel_radius;
+  out_drive_dist = static_cast<uint32_t>(std::round(F));
+  float F_L = gear_ratio_mul * encoder_lines;
+  out_drive_lines = static_cast<uint32_t>(std::round(F_L));
+  // ----> Forwarding
+
+  // ----> Turning
+  float T = F_L * M_PI * wheel_dist / F;
+  out_turn_lines = static_cast<uint32_t>(std::round(T));
+  // <---- Turning
+
+  return out_drive_dist != 0 && out_drive_lines != 0 && out_turn_lines != 0;
 }

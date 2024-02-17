@@ -20,4 +20,11 @@ uint64_t millis();
 
 std::string toString(KangarooError err);
 
+bool calculateDiffDriveUnits(const float wheel_radius, const float wheel_dist,
+                             const uint32_t encoder_lines,
+                             const float gear_ratio_mul,
+                             uint32_t& out_drive_dist,
+                             uint32_t& out_drive_lines,
+                             uint32_t& out_turn_lines);
+
 #endif  // TOOLS_HPP

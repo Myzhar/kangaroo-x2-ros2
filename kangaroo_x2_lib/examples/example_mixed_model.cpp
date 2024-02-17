@@ -4,12 +4,43 @@
 #include <thread>  // std::this_thread::sleep_for
 
 #include "Kangaroo.hpp"
+#include "tools.hpp"
 
 int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
 
+  std::cout << std::endl << "*** Kangaroo x2 differential control test ***" << std::endl;
+  std::cout << std::endl;
+
+  // ----> Units setup calculation
+  float rad = 90.0f;
+  float baseline = 320.0f;
+  uint32_t enc_lines = 100;
+  float gear_ratio = 18.33333333333333333333f;
+  uint32_t out_d_dist, out_d_lines, out_t_lines;
+  calculateDiffDriveUnits(rad, baseline, enc_lines, gear_ratio, out_d_dist,
+                          out_d_lines, out_t_lines);
+
+  std::cout << "Robot Configuration: " << std::endl;
+  std::cout << " * Wheel radius: " << rad << " mm" << std::endl;
+  std::cout << " * Wheel distance: " << baseline << " mm" << std::endl;
+  std::cout << " * Encoder lines: " << enc_lines << std::endl;
+  std::cout << " * Gear ratio: " << gear_ratio << ":1" << std::endl;
+
+  std::cout << std::endl;
+
+  std::cout << "Kangaroo x2 Configuration: " << std::endl;
+  std::cout << " * D, UNITS: " << out_d_dist << " mm = " << out_d_lines
+            << " lines" << std::endl;
+  std::cout << " * T, UNITS: " << 360 << "° = " << out_t_lines << " lines"
+            << std::endl;
+  // <---- Units setup calculation
+
   std::string ser_port_name = "/dev/ttyUSB0";
+
+  std::cout << std::endl << "Opening Kangaroo x2 on port '" << ser_port_name << "..." << std::endl;
+
   Stream stream;
   if (!stream.openSerialPort(ser_port_name, LibSerial::BaudRate::BAUD_115200)) {
     std::cerr << "Error opening serial port '" << ser_port_name << "'!"
@@ -17,8 +48,7 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  std::cout << " *** Kangaroo x2 differential control test ***" << std::endl;
-  std::cout << std::endl;
+  std::cout << "serial connection OK." << ser_port_name << std::endl;
 
   // ----> Setup drive channels: Drive 'D', Turn 'T'
   KangarooSerial ser(stream);
@@ -48,8 +78,8 @@ int main(int argc, char *argv[]) {
   // <---- Start control channels
 
   // ----> Set drive units
-  err =
-      drive.units(565, 1833);  // 100 CPR, 180 mm wheel radius, 320 mm wheelbase
+  err = drive.units(565, 1833);  // 100 CPR, 180 mm wheel
+                                 // radius, 320 mm wheelbase
   if (err != KANGAROO_NO_ERROR) {
     std::cerr << "Error setting drive units: " << toString(err) << std::endl;
     return EXIT_FAILURE;
@@ -168,22 +198,21 @@ int main(int argc, char *argv[]) {
         t_avg += t;
       }
       std::cout << "+ " << i + 1 << "/" << read_count;
-      std::cout << " * D: " << d << "/"
-                << drive.getSetPointSpeed().value();
-      std::cout << " * T: " << t << "/" << turn.getSetPointSpeed().value() << "\r" << std::flush;
+      std::cout << " * D: " << d << "/" << drive.getSetPointSpeed().value();
+      std::cout << " * T: " << t << "/" << turn.getSetPointSpeed().value()
+                << "\r" << std::flush;
     }
 
     d_avg /= real_count;
     t_avg /= real_count;
 
     std::cout << std::endl;
-    std::cout << "- Avg drive: "
-              << d_avg/1000. << " m/sec ";
+    std::cout << "- Avg drive: " << d_avg / 1000. << " m/sec ";
     std::cout << "- Avg turn: " << t_avg << " °/sec ";
 
     switch (cycle) {
       case 0:
-        fw_avg = d_avg/1000.;
+        fw_avg = d_avg / 1000.;
         break;
       case 1:
         bw_avg = d_avg / 1000.;
@@ -198,15 +227,13 @@ int main(int argc, char *argv[]) {
 
     drive.setSpeed(0, d_acc);
     turn.setSpeed(0, t_acc);
-    
+
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
 
   std::cout << std::endl;
-  std::cout << " * Avg forward speed:\t\t" << fw_avg << " m/sec"
-            << std::endl;
-  std::cout << " * Avg backward speed:\t\t" << bw_avg << " m/sec"
-            << std::endl;
+  std::cout << " * Avg forward speed:\t\t" << fw_avg << " m/sec" << std::endl;
+  std::cout << " * Avg backward speed:\t\t" << bw_avg << " m/sec" << std::endl;
   std::cout << " * Avg counterclockwise speed:\t" << ccw_avg << " °/sec"
             << std::endl;
   std::cout << " * Avg clockwise speed:\t\t" << cw_avg << " °/sec" << std::endl;

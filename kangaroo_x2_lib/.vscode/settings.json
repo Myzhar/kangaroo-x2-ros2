@@ -65,6 +65,10 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "strstream": "cpp",
+        "list": "cpp",
+        "cfenv": "cpp",
+        "variant": "cpp"
     }
 }
