@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
   std::cout << " * Channel 'D' unit set" << std::endl;
 
   err =
-      turn.units(360, 3256);  // 100 CPR, 180 mm wheel radius, 320 mm wheelbase
+      turn.units(360, 3258);  // 100 CPR, 180 mm wheel radius, 320 mm wheelbase
   if (err != KANGAROO_NO_ERROR) {
     std::cerr << "Error setting turn units: " << toString(err) << std::endl;
     return EXIT_FAILURE;
