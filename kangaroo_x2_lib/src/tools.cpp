@@ -32,7 +32,7 @@ std::string toString(KangarooError err) {
       return std::string("code not recognized");
 
     case KangarooError::KANGAROO_SERIAL_TIMEOUT:
-      return std::string("serial timeour");
+      return std::string("serial timeout");
 
     case KangarooError::KANGAROO_INVALID_STATUS:
       return std::string("invalid status");

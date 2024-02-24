@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   // <---- Start control channels
 
   // ----> Set drive units
-  err = drive.units(565, 1833);  // 100 CPR, 180 mm wheel
+  err = drive.units(out_d_dist, out_d_lines);  // 100 CPR, 180 mm wheel
                                  // radius, 320 mm wheelbase
   if (err != KANGAROO_NO_ERROR) {
     std::cerr << "Error setting drive units: " << toString(err) << std::endl;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
   std::cout << " * Channel 'D' unit set" << std::endl;
 
   err =
-      turn.units(360, 3258);  // 100 CPR, 180 mm wheel radius, 320 mm wheelbase
+      turn.units(360, out_t_lines);  // 100 CPR, 180 mm wheel radius, 320 mm wheelbase
   if (err != KANGAROO_NO_ERROR) {
     std::cerr << "Error setting turn units: " << toString(err) << std::endl;
     return EXIT_FAILURE;
@@ -116,8 +116,7 @@ int main(int argc, char *argv[]) {
   int d_acc = 2000;
   int t_acc = 720;
 
-  int read_count = 150;
-  uint16_t real_count = 0;
+  int read_count = 150;  
 
   drive.setSpeed(0, d_acc);
   turn.setSpeed(0, t_acc);
@@ -131,6 +130,8 @@ int main(int argc, char *argv[]) {
 
     double t_avg = 0.0;
     double d_avg = 0.0;
+
+    uint16_t real_count = 0;
 
     switch (cycle) {
       case 0:
@@ -192,7 +193,7 @@ int main(int argc, char *argv[]) {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       double d = drive.getSpeed().value();
       double t = turn.getSpeed().value();
-      if (i >= 100) {
+      if (i >= 50) {
         real_count++;
         d_avg += d;
         t_avg += t;
@@ -202,6 +203,9 @@ int main(int argc, char *argv[]) {
       std::cout << " * T: " << t << "/" << turn.getSetPointSpeed().value()
                 << "\r" << std::flush;
     }
+
+    drive.setSpeed(0, d_acc);
+    turn.setSpeed(0, t_acc);
 
     d_avg /= real_count;
     t_avg /= real_count;
@@ -225,10 +229,7 @@ int main(int argc, char *argv[]) {
         break;
     }
 
-    drive.setSpeed(0, d_acc);
-    turn.setSpeed(0, t_acc);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
   }
 
   std::cout << std::endl;
