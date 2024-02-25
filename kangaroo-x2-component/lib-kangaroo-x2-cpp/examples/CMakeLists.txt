@@ -1,0 +1,7 @@
+add_executable(example_mixed_model example_mixed_model.cpp)
+target_link_libraries(example_mixed_model kangaroo_x2_lib)
+target_include_directories(example_mixed_model PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+add_executable(example_tune_mixed_model example_tune_mixed_model.cpp)
+target_link_libraries(example_tune_mixed_model kangaroo_x2_lib)
+target_include_directories(example_tune_mixed_model PUBLIC ${CMAKE_SOURCE_DIR}/include)

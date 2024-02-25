@@ -1,4 +1,4 @@
 [submodule "lib-kangaroo-x2-cpp"]
-	path = lib-kangaroo-x2-cpp
+	path = kangaroo-x2-ros2/lib-kangaroo-x2-cpp
 	url = https://github.com/Myzhar/lib-kangaroo-x2-cpp.git
 	branch = main
