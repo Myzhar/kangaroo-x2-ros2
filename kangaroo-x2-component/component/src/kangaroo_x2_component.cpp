@@ -19,6 +19,8 @@
 namespace kx2
 {
 
+const int QOS_QUEUE_SIZE = 10;
+
 KangarooX2Component::KangarooX2Component(const rclcpp::NodeOptions & options)
 : nav2_util::LifecycleNode("lidar_node", "", options), _diagUpdater(this)
 {
@@ -50,6 +52,15 @@ KangarooX2Component::~KangarooX2Component() {}
 nav2_util::CallbackReturn KangarooX2Component::on_configure(
   const lc::State & prev_state)
 {
+  RCLCPP_DEBUG_STREAM(
+    get_logger(),
+    "on_configure: " << prev_state.label() << " ["
+                     << static_cast<int>(prev_state.id())
+                     << "] -> Inactive");
+
+  // Initialize parameters from yaml file
+  getParameters();
+
   return nav2_util::CallbackReturn::ERROR;
 }
 
@@ -182,7 +193,71 @@ void KangarooX2Component::getParam(
   }
 }
 
-void KangarooX2Component::getDebugParams() {}
-void KangarooX2Component::getCommParams() {}
-void KangarooX2Component::getControlParams() {}
+void KangarooX2Component::getDebugParams()
+{
+  // ----> Debug mode initialization from parameters
+  getParam(
+    "general.debug_mode", _debugMode, _debugMode,
+    "Enable debug messages");
+  if (_debugMode) {
+    rcutils_ret_t res = rcutils_logging_set_logger_level(
+      get_logger().get_name(), RCUTILS_LOG_SEVERITY_DEBUG);
+
+    if (res != RCUTILS_RET_OK) {
+      RCLCPP_INFO(get_logger(), "Error setting DEBUG level for logger");
+    } else {
+      RCLCPP_INFO(get_logger(), "*** Debug Mode enabled ***");
+    }
+  } else {
+    rcutils_ret_t res = rcutils_logging_set_logger_level(
+      get_logger().get_name(), RCUTILS_LOG_SEVERITY_INFO);
+
+    if (res != RCUTILS_RET_OK) {
+      RCLCPP_INFO(get_logger(), "Error setting INFO level for logger");
+    }
+  }
+
+  RCLCPP_DEBUG(
+    get_logger(), "[ROS2] Using RMW_IMPLEMENTATION = %s",
+    rmw_get_implementation_identifier());
+  // <---- Debug mode initialization from parameters
+}
+void KangarooX2Component::getCommParams()
+{
+  RCLCPP_INFO(get_logger(), "+++ COMMUNICATION PARAMETERS +++");
+
+  // ----> Communication
+  getParam(
+    "comm.serial_port", _serialPort, _serialPort,
+    "Communication serial port path", true, " * Serial port: ");
+
+  getParam(
+    "comm.baudrate", _baudrate, _baudrate,
+    "Communication serial port path", true, " * Baudrate: ");
+
+  getParam(
+    "comm.timeout_msec", _readTimeOut_msec, _readTimeOut_msec,
+    "Data reading timeout in msec", false, " * Timeout [msec]: ");
+  // <---- Communication
+}
+void KangarooX2Component::getControlParams()
+{
+  RCLCPP_INFO(get_logger(), "+++ MOTOR CONTROL PARAMETERS +++");
+
+  // ----> Communication
+  getParam(
+    "diff_drive.wheel_radius_mm", _wheelRad_mm, _wheelRad_mm,
+    "Wheel radius in millimeters", true, " * Wheel radius [mm]: ");
+
+  getParam(
+    "diff_drive.track_width_mm", _trackWidth_mm, _trackWidth_mm,
+    "Distance between the middle of the wheels in millimeters", true,
+    " * Track Width [mm]: ");
+
+  getParam(
+    "encoder.lines", _encLines, _encLines,
+    "The counting feature of the encoder [Pulse per Round (PPR) or "
+    "lines]. That is CPR/4 [Counts per Round]",
+    true, " * Encoder lines [PPR]: ");
+}
 }  // namespace kx2

@@ -103,6 +103,22 @@ protected:
 private:
   // Diagnostic updater
   diagnostic_updater::Updater _diagUpdater;
+
+  // ----> Parameters
+  bool _debugMode = false;
+
+  std::string _serialPort = "/dev/tty0";  //!< Serial port name
+  int _baudrate = 115200;                 //!< Serial baudrate
+  int _readTimeOut_msec = 1000;           //!< Serial read timeout in msec
+
+  double _wheelRad_mm = 0.0;  //!< Radius of the wheels [mm]
+  double _trackWidth_mm =
+    0.0;                 //!< Distance between the middle of the wheels [mm]
+  double _encLines =
+    0;    //!< The counting feature of the encoder [Pulse per Round
+          //!< (PPR) or lines]. That is CPR/4 [Counts per Round]
+
+  // <---- Parameters
 };
 
 }  // namespace kx2
