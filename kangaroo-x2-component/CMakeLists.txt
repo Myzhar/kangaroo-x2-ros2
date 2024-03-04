@@ -160,8 +160,8 @@ ament_target_dependencies(${PROJECT_NAME}
     ${DEPENDENCIES}
 )
 
-rclcpp_components_register_nodes(${PROJECT_NAME} "kangaroo_x2::KangarooX2Component")
-set(node_plugins "${node_plugins}kangaroo_x2::KangarooX2Component;$<TARGET_FILE:${PROJECT_NAME}>\n")
+rclcpp_components_register_nodes(${PROJECT_NAME} "kx2::KangarooX2Component")
+set(node_plugins "${node_plugins}kx2::KangarooX2Component;$<TARGET_FILE:${PROJECT_NAME}>\n")
 
 # Install components
 install(TARGETS ${PROJECT_NAME}

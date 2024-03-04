@@ -61,7 +61,23 @@ nav2_util::CallbackReturn KangarooX2Component::on_configure(
   // Initialize parameters from yaml file
   getParameters();
 
-  return nav2_util::CallbackReturn::ERROR;
+  // ----> Calculate diff drive coefficients
+  kx2::calculateDiffDriveUnits(
+    _wheelRad_mm, _trackWidth_mm, _encLines,
+    _gearRatio, _d_dist, _d_lines,
+    _t_lines);
+
+  RCLCPP_INFO(get_logger(), "Kangaroo x2 Configuration [Differential drive]: ");
+  RCLCPP_INFO_STREAM(
+    get_logger(), " * [Forward channel] D, UNITS: " << _d_dist << " mm = "
+                                                    << _d_lines << " lines");
+  RCLCPP_INFO_STREAM(
+    get_logger(), " * [Turn channel] T, UNITS: " << 360 << "° = "
+
+                                                 << _t_lines << " lines");
+  // <---- Calculate diff drive coefficients
+
+  return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_activate(
@@ -222,6 +238,7 @@ void KangarooX2Component::getDebugParams()
     rmw_get_implementation_identifier());
   // <---- Debug mode initialization from parameters
 }
+
 void KangarooX2Component::getCommParams()
 {
   RCLCPP_INFO(get_logger(), "+++ COMMUNICATION PARAMETERS +++");
@@ -240,6 +257,7 @@ void KangarooX2Component::getCommParams()
     "Data reading timeout in msec", false, " * Timeout [msec]: ");
   // <---- Communication
 }
+
 void KangarooX2Component::getControlParams()
 {
   RCLCPP_INFO(get_logger(), "+++ MOTOR CONTROL PARAMETERS +++");
@@ -259,5 +277,15 @@ void KangarooX2Component::getControlParams()
     "The counting feature of the encoder [Pulse per Round (PPR) or "
     "lines]. That is CPR/4 [Counts per Round]",
     true, " * Encoder lines [PPR]: ");
+
+  getParam(
+    "encoder.gear_ratio", _gearRatio, _gearRatio,
+    "The gear ratio of the motor, according to where the encoder is placed.",
+    true);
+  RCLCPP_INFO_STREAM(get_logger(), " * Gear ratio : " << _gearRatio << ":1");
 }
+
 }  // namespace kx2
+
+#include <rclcpp_components/register_node_macro.hpp>  // NOLINT
+RCLCPP_COMPONENTS_REGISTER_NODE(kx2::KangarooX2Component)

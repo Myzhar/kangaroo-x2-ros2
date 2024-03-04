@@ -111,14 +111,20 @@ private:
   int _baudrate = 115200;                 //!< Serial baudrate
   int _readTimeOut_msec = 1000;           //!< Serial read timeout in msec
 
-  double _wheelRad_mm = 0.0;  //!< Radius of the wheels [mm]
-  double _trackWidth_mm =
-    0.0;                 //!< Distance between the middle of the wheels [mm]
-  double _encLines =
+  float _wheelRad_mm = 0.0;  //!< Radius of the wheels [mm]
+  float _trackWidth_mm =
+    0.0;    //!< Distance between the middle of the wheels [mm]
+  int _encLines =
     0;    //!< The counting feature of the encoder [Pulse per Round
           //!< (PPR) or lines]. That is CPR/4 [Counts per Round]
-
+  float _gearRatio = 1.0;  //!< Motor gear ration -> _gearRation:1
   // <---- Parameters
+
+  // ----> Diff Driver values
+  uint32_t _d_dist;  //!<  Encoder Forward distance
+  uint32_t _d_lines;  //!<  Encoder Forward lines
+  uint32_t _t_lines;  //!<  Encoder Turn lines
+  // <---- Diff Driver values
 };
 
 }  // namespace kx2

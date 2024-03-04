@@ -13,8 +13,9 @@
       timeout_msec: 1000 # data communication timeout in msec
 
     diff_drive:
-      wheel_radius_mm: 90 # Radius of the wheels [mm]
-      track_width_mm: 320 # Distance between the middle of the wheels [mm]
+      wheel_radius_mm: 90.0 # Radius of the wheels [mm]
+      track_width_mm: 320.0 # Distance between the middle of the wheels [mm]
 
     encoder:
       lines: 100 # The counting feature of the encoder [Pulse per Round (PPR) or lines]. That is CPR/4 [Counts per Round]
+      gear_ratio: 18.3 # Motor gear ration according to where the encoder is mounted on the motor -> gear_ratio:1
