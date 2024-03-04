@@ -1,42 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
-project(kangaroo_x2_node)
+project(kangaroo_x2_bringup)
 
 ################################################
 ## Generate symbols for IDE indexer (VSCode)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Default to C99
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
-
-# Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
-#if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-#  add_compile_options(-Wall -Wextra -Wpedantic)
-#endif()
-
-# if CMAKE_BUILD_TYPE is not specified, take 'Release' as default
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
-if(CMAKE_BUILD_TYPE MATCHES Release)
-    message(STATUS " * Release Mode")
-    add_compile_options(-Wno-deprecated-declarations)
-endif()
-
-if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
-    message(STATUS " * Release with Debug Info Mode")
-    add_compile_options(-Wno-deprecated-declarations)
-endif()
-
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    message(STATUS " * Debug Mode")
-endif()
 
 ################################################
 # Check the ROS2 version

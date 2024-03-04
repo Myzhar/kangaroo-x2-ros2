@@ -29,7 +29,7 @@ def generate_launch_description():
 
     # Kangaroo x2 node configuration file
     def_kx2_config_path = os.path.join(
-        get_package_share_directory('kangaroo_x2_node'),
+        get_package_share_directory('kangaroo_x2_bringup'),
         'params',
         'default_params.yaml'
     )
@@ -37,7 +37,7 @@ def generate_launch_description():
     # Launch arguments
     declare_node_name_cmd = DeclareLaunchArgument(
         'node_name',
-        default_value='kangaroo_x2_node',
+        default_value='kangaroo_x2',
         description='Name of the node'
     )
 
@@ -47,7 +47,7 @@ def generate_launch_description():
         description='Custom configuration file'
     )
 
-    # Kangaroo x2 lifecycle node
+    # Kangaroo x2 lifecycle component node
     kx2_lc_component = ComposableNode(
         package='kangaroo_x2_component',
         namespace='',
@@ -67,6 +67,7 @@ def generate_launch_description():
                 kx2_lc_component],
         output='screen',
     )
+
     # Define LaunchDescription variable
     ld = LaunchDescription()
 

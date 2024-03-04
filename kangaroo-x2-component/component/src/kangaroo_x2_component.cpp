@@ -28,12 +28,12 @@ KangarooX2Component::KangarooX2Component(const rclcpp::NodeOptions & options)
   RCLCPP_INFO(get_logger(), " Kangaroo X2 Motor Control Lifecycle Component ");
   RCLCPP_INFO(
     get_logger(),
-    " * **********************************************");
+    "**********************************************");
   RCLCPP_INFO(get_logger(), " * namespace: %s", get_namespace());
   RCLCPP_INFO(get_logger(), " * node name: %s", get_name());
   RCLCPP_INFO(
     get_logger(),
-    " * **********************************************");
+    "**********************************************");
   RCLCPP_INFO(
     get_logger(),
     " + State: 'unconfigured [1]'. Use lifecycle commands "
@@ -77,37 +77,113 @@ nav2_util::CallbackReturn KangarooX2Component::on_configure(
                                                  << _t_lines << " lines");
   // <---- Calculate diff drive coefficients
 
+  RCLCPP_INFO(
+    get_logger(),
+    " + State: 'inactive [2]'. Use lifecycle commands to "
+    "activate [3], cleanup [2] or shutdown "
+    "[6]");
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_activate(
   const lc::State & prev_state)
 {
-  return nav2_util::CallbackReturn::ERROR;
+  RCLCPP_DEBUG_STREAM(
+    get_logger(),
+    "on_activate: " << prev_state.label() << " ["
+                    << static_cast<int>(prev_state.id())
+                    << "] -> Active");
+
+  // create bond connection
+  createBond();
+
+  // Activate publisher
+  //_scanPub->on_activate();
+
+  // Start lidar thread
+  //startLidarThread();
+
+  RCLCPP_INFO(
+    get_logger(),
+    " + State: 'active [3]'. Use lifecycle commands to "
+    "deactivate [4] or shutdown [7]");
+  return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_deactivate(
   const lc::State & prev_state)
 {
-  return nav2_util::CallbackReturn::ERROR;
+  RCLCPP_DEBUG_STREAM(
+    get_logger(),
+    "on_deactivate: " << prev_state.label() << " ["
+                      << static_cast<int>(prev_state.id())
+                      << "] -> Inactive");
+
+  // destroy bond connection
+  destroyBond();
+
+  // Dectivate publisher
+  //_scanPub->on_deactivate();
+
+  // Stop Lidar THread
+  //stopLidarThread();
+
+  RCLCPP_INFO(
+    get_logger(),
+    " + State: 'inactive [2]'. Use lifecycle commands to "
+    "activate [3], cleanup [2] or shutdown "
+    "[6]");
+  return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_cleanup(
   const lc::State & prev_state)
 {
-  return nav2_util::CallbackReturn::ERROR;
+  RCLCPP_DEBUG_STREAM(
+    get_logger(),
+    "on_cleanup: " << prev_state.label() << " ["
+                   << static_cast<int>(prev_state.id())
+                   << "] -> Unconfigured");
+
+  //_scanPub.reset();
+
+  RCLCPP_INFO(
+    get_logger(),
+    " + State: 'unconfigured [1]'. Use lifecycle commands "
+    "to configure [1] or shutdown [5]");
+  return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_shutdown(
   const lc::State & prev_state)
 {
-  return nav2_util::CallbackReturn::ERROR;
+  RCLCPP_DEBUG_STREAM(
+    get_logger(),
+    "on_shutdown: " << prev_state.label() << " ["
+                    << static_cast<int>(prev_state.id())
+                    << "] -> Finalized");
+
+  //_scanPub.reset();
+
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    " + State: 'finalized [4]'. Press Ctrl+C to kill...");
+  return nav2_util::CallbackReturn::SUCCESS;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_error(
   const lc::State & prev_state)
 {
-  return nav2_util::CallbackReturn::ERROR;
+  RCLCPP_DEBUG_STREAM(
+    get_logger(),
+    "on_error: " << prev_state.label() << " ["
+                 << static_cast<int>(prev_state.id())
+                 << "] -> Finalized");
+
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    " + State: 'finalized [4]'. Press Ctrl+C to kill...");
+  return nav2_util::CallbackReturn::FAILURE;
 }
 
 void KangarooX2Component::callback_updateDiagnostic(
@@ -282,7 +358,7 @@ void KangarooX2Component::getControlParams()
     "encoder.gear_ratio", _gearRatio, _gearRatio,
     "The gear ratio of the motor, according to where the encoder is placed.",
     true);
-  RCLCPP_INFO_STREAM(get_logger(), " * Gear ratio : " << _gearRatio << ":1");
+  RCLCPP_INFO_STREAM(get_logger(), " * Gear ratio: " << _gearRatio << ":1");
 }
 
 }  // namespace kx2
