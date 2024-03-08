@@ -5,6 +5,7 @@
 /**:
   ros__parameters:
     general:
+      control_freq: 20.0 # Control frequency -> frequency of the main thread
       debug_mode: true # true to activate debug messages
 
     comm:

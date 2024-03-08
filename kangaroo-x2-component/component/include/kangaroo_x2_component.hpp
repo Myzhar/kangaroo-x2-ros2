@@ -28,14 +28,20 @@
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
 #include <string>
+#include <thread>
 
 #include "Kangaroo.hpp"
 #include "visibility_control.hpp"
+
+#include "kx2_tools.hpp"
 
 namespace lc = rclcpp_lifecycle;
 
 namespace kx2
 {
+/*!
+ * @brief ROS 2 Lifecycle Component for Kangaroo x2 control
+ */
 class KangarooX2Component : public nav2_util::LifecycleNode
 {
 public:
@@ -71,10 +77,13 @@ public:
 
   /// \brief Callback for diagnostic updater
   /// \param[in] stat The current diagnostic status
-  void callback_updateDiagnostic(
-    diagnostic_updater::DiagnosticStatusWrapper & stat);
+  void callback_updateDiagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
 
 protected:
+  void startMainThread();
+  void stopMainThread();
+  void mainThreadFunc();
+
   // ----> Node Parameters
   template<typename T>
   void getParam(
@@ -89,7 +98,7 @@ protected:
     std::string log_info = std::string());
 
   void getParam(
-    std::string paramName, float defValue, float & outVal,
+    std::string paramName, double defValue, double & outVal,
     const nav2_util::LifecycleNode::floating_point_range & range,
     const std::string & description = "", bool read_only = true,
     std::string log_info = std::string());
@@ -101,6 +110,11 @@ protected:
   // <---- Node Parameters
 
 private:
+  // ----> Threads
+  std::thread _mainThread; //!< Main thread
+  bool _threadStop = false;
+  // <---- Threads
+
   // Diagnostic updater
   diagnostic_updater::Updater _diagUpdater;
 
@@ -111,13 +125,15 @@ private:
   int _baudrate = 115200;                 //!< Serial baudrate
   int _readTimeOut_msec = 1000;           //!< Serial read timeout in msec
 
-  float _wheelRad_mm = 0.0;  //!< Radius of the wheels [mm]
-  float _trackWidth_mm =
+  double _wheelRad_mm = 0.0f;  //!< Radius of the wheels [mm]
+  double _trackWidth_mm =
     0.0;    //!< Distance between the middle of the wheels [mm]
   int _encLines =
     0;    //!< The counting feature of the encoder [Pulse per Round
           //!< (PPR) or lines]. That is CPR/4 [Counts per Round]
-  float _gearRatio = 1.0;  //!< Motor gear ration -> _gearRation:1
+  double _gearRatio = 1.0f;  //!< Motor gear ration -> _gearRation:1
+
+  double _controlFreq = 20.0f;  //!< Main thread frequency
   // <---- Parameters
 
   // ----> Diff Driver values
@@ -125,6 +141,10 @@ private:
   uint32_t _d_lines;  //!<  Encoder Forward lines
   uint32_t _t_lines;  //!<  Encoder Turn lines
   // <---- Diff Driver values
+
+  // ----> Diagnostic
+  std::unique_ptr<tools::WinAvg> _avgMainThreadPeriod_sec;
+  // <---- Diagnostic
 };
 
 }  // namespace kx2

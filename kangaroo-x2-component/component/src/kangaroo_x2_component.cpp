@@ -16,6 +16,8 @@
 
 #include "kangaroo_x2_component.hpp"
 
+#include <sstream>
+
 namespace kx2
 {
 
@@ -26,14 +28,10 @@ KangarooX2Component::KangarooX2Component(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO(get_logger(), "***********************************************");
   RCLCPP_INFO(get_logger(), " Kangaroo X2 Motor Control Lifecycle Component ");
-  RCLCPP_INFO(
-    get_logger(),
-    "**********************************************");
+  RCLCPP_INFO(get_logger(), "**********************************************");
   RCLCPP_INFO(get_logger(), " * namespace: %s", get_namespace());
   RCLCPP_INFO(get_logger(), " * node name: %s", get_name());
-  RCLCPP_INFO(
-    get_logger(),
-    "**********************************************");
+  RCLCPP_INFO(get_logger(), "**********************************************");
   RCLCPP_INFO(
     get_logger(),
     " + State: 'unconfigured [1]'. Use lifecycle commands "
@@ -47,7 +45,11 @@ KangarooX2Component::KangarooX2Component(const rclcpp::NodeOptions & options)
   // <---- Diagnostic
 }
 
-KangarooX2Component::~KangarooX2Component() {}
+KangarooX2Component::~KangarooX2Component()
+{
+  // Stop Main THread
+  stopMainThread();
+}
 
 nav2_util::CallbackReturn KangarooX2Component::on_configure(
   const lc::State & prev_state)
@@ -64,18 +66,24 @@ nav2_util::CallbackReturn KangarooX2Component::on_configure(
   // ----> Calculate diff drive coefficients
   kx2::calculateDiffDriveUnits(
     _wheelRad_mm, _trackWidth_mm, _encLines,
-    _gearRatio, _d_dist, _d_lines,
-    _t_lines);
+    _gearRatio, _d_dist, _d_lines, _t_lines);
 
   RCLCPP_INFO(get_logger(), "Kangaroo x2 Configuration [Differential drive]: ");
   RCLCPP_INFO_STREAM(
-    get_logger(), " * [Forward channel] D, UNITS: " << _d_dist << " mm = "
-                                                    << _d_lines << " lines");
+    get_logger(), " * [Forward channel] D, UNITS: "
+      << _d_dist << " mm = " << _d_lines
+      << " lines");
   RCLCPP_INFO_STREAM(
-    get_logger(), " * [Turn channel] T, UNITS: " << 360 << "° = "
+    get_logger(),
+    " * [Turn channel] T, UNITS: " << 360 << "° = "
 
-                                                 << _t_lines << " lines");
+                                   << _t_lines << " lines");
   // <---- Calculate diff drive coefficients
+
+  // ----> Initialize Avg Mean
+  _avgMainThreadPeriod_sec =
+    std::make_unique<tools::WinAvg>(static_cast<size_t>(_controlFreq));
+  // <---- Initialize Avg Mean
 
   RCLCPP_INFO(
     get_logger(),
@@ -97,11 +105,11 @@ nav2_util::CallbackReturn KangarooX2Component::on_activate(
   // create bond connection
   createBond();
 
-  // Activate publisher
-  //_scanPub->on_activate();
+  // TODO Activate publishers
+  //_pub->on_activate();
 
-  // Start lidar thread
-  //startLidarThread();
+  // Start main thread
+  startMainThread();
 
   RCLCPP_INFO(
     get_logger(),
@@ -125,8 +133,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_deactivate(
   // Dectivate publisher
   //_scanPub->on_deactivate();
 
-  // Stop Lidar THread
-  //stopLidarThread();
+  // Stop Main THread
+  stopMainThread();
 
   RCLCPP_INFO(
     get_logger(),
@@ -165,6 +173,9 @@ nav2_util::CallbackReturn KangarooX2Component::on_shutdown(
 
   //_scanPub.reset();
 
+  // Stop Main THread
+  stopMainThread();
+
   RCLCPP_INFO_STREAM(
     get_logger(),
     " + State: 'finalized [4]'. Press Ctrl+C to kill...");
@@ -187,7 +198,40 @@ nav2_util::CallbackReturn KangarooX2Component::on_error(
 }
 
 void KangarooX2Component::callback_updateDiagnostic(
-  diagnostic_updater::DiagnosticStatusWrapper & stat) {}
+  diagnostic_updater::DiagnosticStatusWrapper & stat)
+{
+  RCLCPP_DEBUG(get_logger(), "callback_updateDiagnostic");
+
+  // ----> Lifecycle state
+  auto state = this->get_current_state();
+
+  std::stringstream ss;
+  ss << "Lifecycle state: " << state.label() << " ["
+     << static_cast<int>(state.id()) << "]";
+  if (state.id() != 3) {
+    stat.summary(diagnostic_msgs::msg::DiagnosticStatus::WARN, ss.str());
+    return;
+  }
+
+  stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, ss.str());
+  // <---- Lifecycle state
+
+  // ----> Main thread frequency
+  if (_avgMainThreadPeriod_sec) {
+    double freq = 1.0 / _avgMainThreadPeriod_sec->getAvg();
+    double freq_perc = 100. * freq / _controlFreq;
+    if (freq < 0.8 * _controlFreq) {
+      stat.summary(
+        diagnostic_msgs::msg::DiagnosticStatus::WARN,
+        "Control frequency too low. Consider lowering the value of "
+        "'general.control_freq'");
+    }
+    stat.addf(
+      "Control thread", "Mean Frequency: %.1f Hz (%.1f%%)", freq,
+      freq_perc);
+  }
+  // <---- Main thread frequency
+}
 
 void KangarooX2Component::getParameters()
 {
@@ -259,7 +303,7 @@ void KangarooX2Component::getParam(
 }
 
 void KangarooX2Component::getParam(
-  std::string paramName, float defValue, float & outVal,
+  std::string paramName, double defValue, double & outVal,
   const nav2_util::LifecycleNode::floating_point_range & range,
   const std::string & description, bool read_only, std::string log_info)
 {
@@ -359,6 +403,83 @@ void KangarooX2Component::getControlParams()
     "The gear ratio of the motor, according to where the encoder is placed.",
     true);
   RCLCPP_INFO_STREAM(get_logger(), " * Gear ratio: " << _gearRatio << ":1");
+}
+
+void KangarooX2Component::startMainThread()
+{
+  _mainThread = std::thread(&KangarooX2Component::mainThreadFunc, this);
+}
+
+void KangarooX2Component::stopMainThread()
+{
+  if (!_threadStop) {
+    RCLCPP_DEBUG(get_logger(), "Stopping main thread...");
+    _threadStop = true;
+    try {
+      RCLCPP_DEBUG(get_logger(), "...");
+      if (_mainThread.joinable()) {
+        _mainThread.join();
+      }
+      RCLCPP_DEBUG(get_logger(), "... stopped");
+    } catch (std::system_error & e) {
+      RCLCPP_WARN(get_logger(), "Main thread joining exception: %s", e.what());
+    }
+  }
+}
+
+void KangarooX2Component::mainThreadFunc()
+{
+  RCLCPP_DEBUG(get_logger(), "*** Main thread begin ***");
+
+  _threadStop = false;
+
+  double thread_period_sec = 1.0 / _controlFreq;
+
+  tools::StopWatch freq_meas(get_clock());
+
+  while (1) {
+    tools::StopWatch duration_meas(get_clock());
+
+    // ----> Interruption check
+    if (!rclcpp::ok()) {
+      RCLCPP_DEBUG(get_logger(), "Ctrl+C received: stopping grab thread");
+      _threadStop = true;
+    }
+
+    if (_threadStop) {
+      RCLCPP_DEBUG(get_logger(), "Main thread stopped");
+      break;
+    }
+    // <---- Interruption check
+
+    // Simulate task duration to test statistics
+    rclcpp::sleep_for(std::chrono::microseconds(15126));
+
+    // ----> Thread sleep
+    double elapsed_sec = duration_meas.toc();
+    int sleep_usec = 100;
+    if (elapsed_sec < thread_period_sec) {
+      sleep_usec = static_cast<int>(1e6 * (thread_period_sec - elapsed_sec));
+    }
+
+    RCLCPP_DEBUG_STREAM(get_logger(), " * Duration: " << elapsed_sec << " sec");
+    RCLCPP_DEBUG_STREAM(get_logger(), " * Sleep: " << sleep_usec << " usec");
+    rclcpp::sleep_for(std::chrono::microseconds(sleep_usec));
+    // <---- Thread sleep
+
+    // ----> Thread frequency statistics
+    if (_avgMainThreadPeriod_sec) {
+      double freq_elapsed_sec = freq_meas.toc();
+      _avgMainThreadPeriod_sec->addValue(freq_elapsed_sec);
+      RCLCPP_DEBUG_STREAM(
+        get_logger(), " * Thread frequency:"
+          << 1.0 / freq_elapsed_sec << " Hz");
+      freq_meas.tic();
+    }
+    // <---- Thread frequency statistics
+  }
+
+  RCLCPP_DEBUG(get_logger(), "*** Main thread end ***");
 }
 
 }  // namespace kx2

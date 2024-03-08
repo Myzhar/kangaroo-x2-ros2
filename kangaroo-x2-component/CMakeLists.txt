@@ -32,10 +32,12 @@ endif()
 if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
     message(STATUS " * Release with Debug Info Mode")
     add_compile_options(-Wno-deprecated-declarations)
+    add_compile_options(-g)
 endif()
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     message(STATUS " * Debug Mode")
+    add_compile_options(-g)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules)
@@ -117,11 +119,13 @@ add_custom_target(all_${PROJECT_NAME}_files SOURCES ${all_files})
 add_subdirectory(lib-kangaroo-x2-cpp)
 
 set(TOOLS_INC
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/include/tools.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/include/kx2_tools.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/include/kx2_win_avg.hpp
 )
 
 set(TOOLS_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/src/tools.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/src/kx2_tools.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/src/kx2_win_avg.cpp
 )
 
 set(COMPONENT_INC
@@ -133,14 +137,6 @@ set(COMPONENT_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/component/src/kangaroo_x2_component.cpp
 )
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/component/include
-    include/kangaroo_x2_lib
-    ${UDEV_INCLUDE_DIRS}
-)
-
 ###############################################################################
 # Bin and Install
 
@@ -149,6 +145,12 @@ add_library(${PROJECT_NAME} SHARED
     ${TOOLS_SRC}
     ${COMPONENT_INC}
     ${COMPONENT_SRC}
+)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/component/include
+    include/kangaroo_x2_lib
 )
 target_link_libraries(${PROJECT_NAME}
   kangaroo_x2_lib
