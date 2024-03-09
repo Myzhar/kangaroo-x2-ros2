@@ -31,9 +31,8 @@
 #include <thread>
 
 #include "Kangaroo.hpp"
-#include "visibility_control.hpp"
-
 #include "kx2_tools.hpp"
+#include "visibility_control.hpp"
 
 namespace lc = rclcpp_lifecycle;
 
@@ -77,12 +76,18 @@ public:
 
   /// \brief Callback for diagnostic updater
   /// \param[in] stat The current diagnostic status
-  void callback_updateDiagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
+  void callback_updateDiagnostic(
+    diagnostic_updater::DiagnosticStatusWrapper & stat);
 
 protected:
   void startMainThread();
   void stopMainThread();
   void mainThreadFunc();
+
+  // ----> Kangaroo x2
+  bool initKangarooX2();
+  bool activateKangarooX2();
+  // <---- Kangaroo x2
 
   // ----> Node Parameters
   template<typename T>
@@ -111,7 +116,7 @@ protected:
 
 private:
   // ----> Threads
-  std::thread _mainThread; //!< Main thread
+  std::thread _mainThread;  //!< Main thread
   bool _threadStop = false;
   // <---- Threads
 
@@ -125,26 +130,37 @@ private:
   int _baudrate = 115200;                 //!< Serial baudrate
   int _readTimeOut_msec = 1000;           //!< Serial read timeout in msec
 
+  // TODO(Walt) Add these parameters
+  int _kx2Address = 128;       //!< Board address. Use "DEScribe" to configure
+  char _kxDriveChannel = 'D';  //!< Drive channel. Use "DEScribe" to configure
+  char _kxTurnChannel = 'T';   //!< Drive channel. Use "DEScribe" to configure
+
   double _wheelRad_mm = 0.0f;  //!< Radius of the wheels [mm]
   double _trackWidth_mm =
-    0.0;    //!< Distance between the middle of the wheels [mm]
-  int _encLines =
-    0;    //!< The counting feature of the encoder [Pulse per Round
-          //!< (PPR) or lines]. That is CPR/4 [Counts per Round]
+    0.0;              //!< Distance between the middle of the wheels [mm]
+  int _encLines = 0;  //!< The counting feature of the encoder [Pulse per Round
+                      //!< (PPR) or lines]. That is CPR/4 [Counts per Round]
   double _gearRatio = 1.0f;  //!< Motor gear ration -> _gearRation:1
 
   double _controlFreq = 20.0f;  //!< Main thread frequency
   // <---- Parameters
 
   // ----> Diff Driver values
-  uint32_t _d_dist;  //!<  Encoder Forward distance
-  uint32_t _d_lines;  //!<  Encoder Forward lines
+  uint32_t _d_dist;   //!<  Encoder Drive distance
+  uint32_t _d_lines;  //!<  Encoder Drive lines
   uint32_t _t_lines;  //!<  Encoder Turn lines
   // <---- Diff Driver values
 
   // ----> Diagnostic
   std::unique_ptr<tools::WinAvg> _avgMainThreadPeriod_sec;
   // <---- Diagnostic
+
+  // ----> Kangaroo x2
+  Stream _stream;  // Data stream
+  std::unique_ptr<KangarooSerial> _kx2Serial;
+  std::unique_ptr<KangarooChannel> _kx2ChDrive;
+  std::unique_ptr<KangarooChannel> _kx2ChTurn;
+  // <---- Kangaroo x2
 };
 
 }  // namespace kx2

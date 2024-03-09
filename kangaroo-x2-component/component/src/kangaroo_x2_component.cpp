@@ -51,6 +51,32 @@ KangarooX2Component::~KangarooX2Component()
   stopMainThread();
 }
 
+bool KangarooX2Component::initKangarooX2()
+{
+  RCLCPP_INFO(get_logger(), "*** Initialize Kangaroo x2 ***");
+
+  // ----> Calculate diff drive coefficients
+  kx2::calculateDiffDriveUnits(
+    _wheelRad_mm, _trackWidth_mm, _encLines,
+    _gearRatio, _d_dist, _d_lines, _t_lines);
+
+  RCLCPP_INFO(
+    get_logger(),
+    " * Kangaroo x2 Configuration [Differential drive]: ");
+  RCLCPP_INFO_STREAM(
+    get_logger(), "   - [Forward channel] D, UNITS: "
+      << _d_dist << " mm = " << _d_lines
+      << " lines");
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    "   - [Turn channel] T, UNITS: " << 360 << "° = "
+
+                                     << _t_lines << " lines");
+  // <---- Calculate diff drive coefficients
+
+  return true;
+}
+
 nav2_util::CallbackReturn KangarooX2Component::on_configure(
   const lc::State & prev_state)
 {
@@ -63,22 +89,10 @@ nav2_util::CallbackReturn KangarooX2Component::on_configure(
   // Initialize parameters from yaml file
   getParameters();
 
-  // ----> Calculate diff drive coefficients
-  kx2::calculateDiffDriveUnits(
-    _wheelRad_mm, _trackWidth_mm, _encLines,
-    _gearRatio, _d_dist, _d_lines, _t_lines);
-
-  RCLCPP_INFO(get_logger(), "Kangaroo x2 Configuration [Differential drive]: ");
-  RCLCPP_INFO_STREAM(
-    get_logger(), " * [Forward channel] D, UNITS: "
-      << _d_dist << " mm = " << _d_lines
-      << " lines");
-  RCLCPP_INFO_STREAM(
-    get_logger(),
-    " * [Turn channel] T, UNITS: " << 360 << "° = "
-
-                                   << _t_lines << " lines");
-  // <---- Calculate diff drive coefficients
+  // Initialize Kangaroo x2
+  if (!initKangarooX2()) {
+    return nav2_util::CallbackReturn::ERROR;
+  }
 
   // ----> Initialize Avg Mean
   _avgMainThreadPeriod_sec =
@@ -91,6 +105,106 @@ nav2_util::CallbackReturn KangarooX2Component::on_configure(
     "activate [3], cleanup [2] or shutdown "
     "[6]");
   return nav2_util::CallbackReturn::SUCCESS;
+}
+
+bool KangarooX2Component::activateKangarooX2()
+{
+  RCLCPP_INFO(get_logger(), "*** Activate Kangaroo x2 ***");
+
+  // ----> Setup Communication
+  LibSerial::BaudRate baud;
+  switch (_baudrate) {
+    case 9600:
+      baud = LibSerial::BaudRate::BAUD_9600;
+      break;
+    case 19200:
+      baud = LibSerial::BaudRate::BAUD_19200;
+      break;
+    case 38400:
+      baud = LibSerial::BaudRate::BAUD_38400;
+      break;
+    case 57600:
+      baud = LibSerial::BaudRate::BAUD_57600;
+      break;
+    case 115200:
+      baud = LibSerial::BaudRate::BAUD_115200;
+      break;
+    default:
+      RCLCPP_ERROR_STREAM(
+        get_logger(),
+        "Baudrate " << _baudrate
+                    << " not valid. Please set a correct parameter value.");
+      return false;
+  }
+  if (!_stream.openSerialPort(_serialPort, baud)) {
+    RCLCPP_ERROR_STREAM(
+      get_logger(),
+      "Error opening serial port '" << _serialPort << "'!");
+    return false;
+  }
+  // <---- Setup Communication
+
+  // ----> Setup drive channels: Drive 'D', Turn 'T'
+  _kx2Serial = std::make_unique<KangarooSerial>(_stream);
+  _kx2ChDrive = std::make_unique<KangarooChannel>(
+    *_kx2Serial, _kxDriveChannel,
+    _kx2Address);
+  _kx2ChTurn = std::make_unique<KangarooChannel>(
+    *_kx2Serial, _kxTurnChannel,
+    _kx2Address);
+  // <---- Setup drive channels: Drive 'D', Turn 'T'
+
+  KangarooError err;
+
+  // ----> Start control channels
+  err = _kx2ChDrive->start();
+  if (err != KANGAROO_NO_ERROR) {
+    RCLCPP_ERROR_STREAM(
+      get_logger(),
+      "Error starting the DRIVE channel: " << toString(err));
+    return false;
+  }
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    " * Channel '" << _kxDriveChannel << "' started");
+
+  err = _kx2ChTurn->start();
+  if (err != KANGAROO_NO_ERROR) {
+    RCLCPP_ERROR_STREAM(
+      get_logger(),
+      "Error starting the TURN channel: " << toString(err));
+    return false;
+  }
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    " * Channel '" << _kxTurnChannel << "' started");
+  // <---- Start control channels
+
+  // ----> Set drive units
+  err = _kx2ChDrive->units(_d_dist, _d_lines);
+  if (err != KANGAROO_NO_ERROR) {
+    RCLCPP_ERROR_STREAM(
+      get_logger(),
+      "Error setting DRIVE units: " << toString(err));
+    return false;
+  }
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    " * Channel '" << _kxDriveChannel << "' units set");
+
+  err = _kx2ChTurn->units(360, _t_lines);
+  if (err != KANGAROO_NO_ERROR) {
+    RCLCPP_ERROR_STREAM(
+      get_logger(),
+      "Error setting TURN units: " << toString(err));
+    return false;
+  }
+  RCLCPP_INFO_STREAM(
+    get_logger(),
+    " * Channel '" << _kxTurnChannel << "' units set");
+  // <---- Set drive units
+
+  return true;
 }
 
 nav2_util::CallbackReturn KangarooX2Component::on_activate(
@@ -107,6 +221,11 @@ nav2_util::CallbackReturn KangarooX2Component::on_activate(
 
   // TODO Activate publishers
   //_pub->on_activate();
+
+  // Activate Kangaroo X2
+  if (!activateKangarooX2()) {
+    return nav2_util::CallbackReturn::ERROR;
+  }
 
   // Start main thread
   startMainThread();
@@ -200,7 +319,7 @@ nav2_util::CallbackReturn KangarooX2Component::on_error(
 void KangarooX2Component::callback_updateDiagnostic(
   diagnostic_updater::DiagnosticStatusWrapper & stat)
 {
-  RCLCPP_DEBUG(get_logger(), "callback_updateDiagnostic");
+  // RCLCPP_DEBUG(get_logger(), "callback_updateDiagnostic");
 
   // ----> Lifecycle state
   auto state = this->get_current_state();
@@ -249,14 +368,14 @@ void KangarooX2Component::getParameters()
 
 template<typename T>
 void KangarooX2Component::getParam(
-  std::string paramName, T defValue, T & outVal,
-  const std::string & description,
+  std::string paramName, T defValue,
+  T & outVal, const std::string & description,
   bool read_only, std::string log_info)
 {
   try {
     add_parameter(
-      paramName, rclcpp::ParameterValue(defValue), description, "",
-      read_only);
+      paramName, rclcpp::ParameterValue(defValue), description,
+      "", read_only);
   } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException & ex) {
     RCLCPP_DEBUG_STREAM(get_logger(), "Exception: " << ex.what());
   }
@@ -400,7 +519,8 @@ void KangarooX2Component::getControlParams()
 
   getParam(
     "encoder.gear_ratio", _gearRatio, _gearRatio,
-    "The gear ratio of the motor, according to where the encoder is placed.",
+    "The gear ratio of the motor, according to where the encoder is "
+    "placed.",
     true);
   RCLCPP_INFO_STREAM(get_logger(), " * Gear ratio: " << _gearRatio << ":1");
 }
@@ -422,7 +542,9 @@ void KangarooX2Component::stopMainThread()
       }
       RCLCPP_DEBUG(get_logger(), "... stopped");
     } catch (std::system_error & e) {
-      RCLCPP_WARN(get_logger(), "Main thread joining exception: %s", e.what());
+      RCLCPP_WARN(
+        get_logger(), "Main thread joining exception: %s",
+        e.what());
     }
   }
 }
@@ -462,7 +584,9 @@ void KangarooX2Component::mainThreadFunc()
       sleep_usec = static_cast<int>(1e6 * (thread_period_sec - elapsed_sec));
     }
 
-    RCLCPP_DEBUG_STREAM(get_logger(), " * Duration: " << elapsed_sec << " sec");
+    RCLCPP_DEBUG_STREAM(
+      get_logger(),
+      " * Duration: " << elapsed_sec << " sec");
     RCLCPP_DEBUG_STREAM(get_logger(), " * Sleep: " << sleep_usec << " usec");
     rclcpp::sleep_for(std::chrono::microseconds(sleep_usec));
     // <---- Thread sleep
@@ -472,8 +596,8 @@ void KangarooX2Component::mainThreadFunc()
       double freq_elapsed_sec = freq_meas.toc();
       _avgMainThreadPeriod_sec->addValue(freq_elapsed_sec);
       RCLCPP_DEBUG_STREAM(
-        get_logger(), " * Thread frequency:"
-          << 1.0 / freq_elapsed_sec << " Hz");
+        get_logger(),
+        " * Thread frequency:" << 1.0 / freq_elapsed_sec << " Hz");
       freq_meas.tic();
     }
     // <---- Thread frequency statistics

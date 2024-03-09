@@ -47,7 +47,7 @@ private:
   std::deque<double> _vals;  // The values in the queue used to calculate the windowed average
   double _sumVals = 0.0;  // The updated sum of the values in the queue
 
-  std::mutex mQueueMux;
+  std::mutex _queueMux;
 };
 
 }  // namespace tools

@@ -31,7 +31,7 @@ WinAvg::~WinAvg() {}
 
 double WinAvg::setNewSize(size_t win_size)
 {
-  std::lock_guard<std::mutex> guard(mQueueMux);
+  std::lock_guard<std::mutex> guard(_queueMux);
 
   _winSize = win_size;
   while (_vals.size() > _winSize) {
@@ -45,7 +45,7 @@ double WinAvg::setNewSize(size_t win_size)
 
 double WinAvg::addValue(double val)
 {
-  std::lock_guard<std::mutex> guard(mQueueMux);
+  std::lock_guard<std::mutex> guard(_queueMux);
   if (_vals.size() == _winSize) {
     double older = _vals.back();
     _vals.pop_back();
@@ -65,7 +65,7 @@ double WinAvg::addValue(double val)
 
 double WinAvg::getAvg()
 {
-  std::lock_guard<std::mutex> guard(mQueueMux);
+  std::lock_guard<std::mutex> guard(_queueMux);
 
   double avg = _sumVals / _vals.size();
 
