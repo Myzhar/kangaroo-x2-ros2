@@ -21,6 +21,7 @@
 
 #include <diagnostic_msgs/msg/diagnostic_status.hpp>
 #include <diagnostic_updater/diagnostic_updater.hpp>
+#include <geometry_msgs/msg/twist.hpp>
 #include <lifecycle_msgs/msg/transition.hpp>
 #include <nav2_util/lifecycle_node.hpp>
 #include <rclcpp/publisher.hpp>
@@ -114,10 +115,16 @@ protected:
   void getControlParams();
   // <---- Node Parameters
 
+protected:
+  void cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
+
 private:
   // ----> Threads
   std::thread _mainThread;  //!< Main thread
   bool _threadStop = false;
+
+  std::mutex _driveMux;
+  std::mutex _turnMux;
   // <---- Threads
 
   // Diagnostic updater
@@ -134,6 +141,9 @@ private:
   int _kx2Address = 128;       //!< Board address. Use "DEScribe" to configure
   char _kxDriveChannel = 'D';  //!< Drive channel. Use "DEScribe" to configure
   char _kxTurnChannel = 'T';   //!< Drive channel. Use "DEScribe" to configure
+  int32_t _driveRamp =
+    1000;                   //!< Max drive acceleration/deceleration in mm/sec²
+  int32_t _turnRamp = 360;  //!< Max turn acceleration/deceleration in deg/sec²
 
   double _wheelRad_mm = 0.0f;  //!< Radius of the wheels [mm]
   double _trackWidth_mm =
@@ -165,7 +175,13 @@ private:
   // ----> Motor control status
   double _d_speed;
   double _t_speed;
+  int32_t _d_speedSetpoint = 0;
+  int32_t _t_speedSetpoint = 0;
   // <---- Motor control status
+
+  // ----> Subscribers
+  std::shared_ptr<rclcpp::Subscription<geometry_msgs::msg::Twist>> _cmdVelSub;
+  // <---- Subscribers
 };
 
 }  // namespace kx2

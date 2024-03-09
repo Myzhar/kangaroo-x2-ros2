@@ -18,10 +18,13 @@
 
 #include <sstream>
 
+using std::placeholders::_1;
+
 namespace kx2
 {
 
 const int QOS_QUEUE_SIZE = 10;
+const double RAD2DEG = 180. / M_PI;
 
 KangarooX2Component::KangarooX2Component(const rclcpp::NodeOptions & options)
 : nav2_util::LifecycleNode("lidar_node", "", options), _diagUpdater(this)
@@ -230,6 +233,17 @@ nav2_util::CallbackReturn KangarooX2Component::on_activate(
   // Start main thread
   startMainThread();
 
+  // ----> Create subscribers
+  rclcpp::QoS qos(QOS_QUEUE_SIZE);
+  auto sub_opt = rclcpp::SubscriptionOptions();
+  sub_opt.qos_overriding_options =
+    rclcpp::QosOverridingOptions::with_default_policies();
+
+  _cmdVelSub = create_subscription<geometry_msgs::msg::Twist>(
+    "cmd_vel", qos,
+    std::bind(&KangarooX2Component::cmd_vel_callback, this, _1), sub_opt);
+  // <---- Create subscribers
+
   RCLCPP_INFO(
     get_logger(),
     " + State: 'active [3]'. Use lifecycle commands to "
@@ -246,8 +260,12 @@ nav2_util::CallbackReturn KangarooX2Component::on_deactivate(
                       << static_cast<int>(prev_state.id())
                       << "] -> Inactive");
 
-  // destroy bond connection
-  destroyBond();
+  // ----> Reset subscribers
+  _cmdVelSub.reset();
+  // <---- Reset subscribers
+
+  // Stop Main THread
+  stopMainThread();
 
   // Dectivate publisher
   //_scanPub->on_deactivate();
@@ -274,8 +292,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_deactivate(
   _stream.close();
   // <---- Close connection
 
-  // Stop Main THread
-  stopMainThread();
+  // destroy bond connection
+  destroyBond();
 
   RCLCPP_INFO(
     get_logger(),
@@ -294,7 +312,9 @@ nav2_util::CallbackReturn KangarooX2Component::on_cleanup(
                    << static_cast<int>(prev_state.id())
                    << "] -> Unconfigured");
 
-  //_scanPub.reset();
+  // ----> Destroy subscribers
+  _cmdVelSub.reset();
+  // <---- Destroy subscribers
 
   RCLCPP_INFO(
     get_logger(),
@@ -390,14 +410,14 @@ void KangarooX2Component::getParameters()
 
 template<typename T>
 void KangarooX2Component::getParam(
-  std::string paramName, T defValue,
-  T & outVal, const std::string & description,
+  std::string paramName, T defValue, T & outVal,
+  const std::string & description,
   bool read_only, std::string log_info)
 {
   try {
     add_parameter(
-      paramName, rclcpp::ParameterValue(defValue), description,
-      "", read_only);
+      paramName, rclcpp::ParameterValue(defValue), description, "",
+      read_only);
   } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException & ex) {
     RCLCPP_DEBUG_STREAM(get_logger(), "Exception: " << ex.what());
   }
@@ -564,9 +584,7 @@ void KangarooX2Component::stopMainThread()
       }
       RCLCPP_DEBUG(get_logger(), "... stopped");
     } catch (std::system_error & e) {
-      RCLCPP_WARN(
-        get_logger(), "Main thread joining exception: %s",
-        e.what());
+      RCLCPP_WARN(get_logger(), "Main thread joining exception: %s", e.what());
     }
   }
 }
@@ -596,16 +614,43 @@ void KangarooX2Component::mainThreadFunc()
     }
     // <---- Interruption check
 
+    KangarooError err;
+
+    // ----> Set velocities
+    err = _kx2ChDrive
+      ->setSpeed(_d_speedSetpoint, _driveRamp, KANGAROO_MOVE_DEFAULT)
+      .status()
+      .error();
+    if (err != KANGAROO_NO_ERROR) {
+      RCLCPP_WARN_STREAM(
+        get_logger(),
+        "Error setting drive speed: " << toString(err));
+    }
+
+    err =
+      _kx2ChTurn->setSpeed(_t_speedSetpoint, _turnRamp, KANGAROO_MOVE_DEFAULT)
+      .status()
+      .error();
+    if (err != KANGAROO_NO_ERROR) {
+      RCLCPP_WARN_STREAM(
+        get_logger(),
+        "Error setting turn speed: " << toString(err));
+    }
+    // <---- Set velocities
 
     // ----> Read velocities
     kx2::KangarooStatus d_status;
+    _driveMux.lock();
     d_status = _kx2ChDrive->getSpeed();
+    _driveMux.unlock();
     if (d_status.valid()) {
       _d_speed = static_cast<double>(d_status.value()) / 1000.;
     }
 
     kx2::KangarooStatus t_status;
+    _turnMux.lock();
     t_status = _kx2ChTurn->getSpeed();
+    _turnMux.unlock();
     if (t_status.valid()) {
       _t_speed = static_cast<double>(t_status.value());
     }
@@ -625,9 +670,7 @@ void KangarooX2Component::mainThreadFunc()
       sleep_usec = static_cast<int>(1e6 * (thread_period_sec - elapsed_sec));
     }
 
-    RCLCPP_DEBUG_STREAM(
-      get_logger(),
-      " * Duration: " << elapsed_sec << " sec");
+    RCLCPP_DEBUG_STREAM(get_logger(), " * Duration: " << elapsed_sec << " sec");
     RCLCPP_DEBUG_STREAM(get_logger(), " * Sleep: " << sleep_usec << " usec");
     rclcpp::sleep_for(std::chrono::microseconds(sleep_usec));
     // <---- Thread sleep
@@ -637,14 +680,27 @@ void KangarooX2Component::mainThreadFunc()
       double freq_elapsed_sec = freq_meas.toc();
       _avgMainThreadPeriod_sec->addValue(freq_elapsed_sec);
       RCLCPP_DEBUG_STREAM(
-        get_logger(),
-        " * Thread frequency:" << 1.0 / freq_elapsed_sec << " Hz");
+        get_logger(), " * Thread frequency:"
+          << 1.0 / freq_elapsed_sec << " Hz");
       freq_meas.tic();
     }
     // <---- Thread frequency statistics
   }
 
   RCLCPP_DEBUG(get_logger(), "*** Main thread end ***");
+}
+
+void KangarooX2Component::cmd_vel_callback(
+  const geometry_msgs::msg::Twist::SharedPtr msg)
+{
+  RCLCPP_DEBUG(get_logger(), "*** cmd_vel_callback ***");
+  _d_speedSetpoint = static_cast<int32_t>(std::round(msg->linear.x * 1000.));
+  _t_speedSetpoint = static_cast<int32_t>(std::round(msg->angular.z * RAD2DEG));
+
+  RCLCPP_DEBUG_STREAM(
+    get_logger(), " * New Setpoint: " << _d_speedSetpoint
+                                      << " mm/sec - "
+                                      << _t_speedSetpoint << "deg/sec");
 }
 
 }  // namespace kx2
