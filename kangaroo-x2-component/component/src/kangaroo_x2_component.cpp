@@ -252,6 +252,28 @@ nav2_util::CallbackReturn KangarooX2Component::on_deactivate(
   // Dectivate publisher
   //_scanPub->on_deactivate();
 
+  // ----> Shutdown motors
+  KangarooError d_err = _kx2ChDrive->powerDown();
+  if (d_err != KANGAROO_NO_ERROR) {
+    RCLCPP_WARN_STREAM(
+      get_logger(),
+      " Drive channel powerdown error: " << toString(d_err));
+  }
+  KangarooError t_err = _kx2ChTurn->powerDown();
+  if (t_err != KANGAROO_NO_ERROR) {
+    RCLCPP_WARN_STREAM(
+      get_logger(),
+      " Turn channel powerdown error: " << toString(t_err));
+  }
+  // <---- Shutdown motors
+
+  // ----> Close connection
+  _kx2ChDrive.reset();
+  _kx2ChTurn.reset();
+  _kx2Serial.reset();
+  _stream.close();
+  // <---- Close connection
+
   // Stop Main THread
   stopMainThread();
 
@@ -292,7 +314,7 @@ nav2_util::CallbackReturn KangarooX2Component::on_shutdown(
 
   //_scanPub.reset();
 
-  // Stop Main THread
+  // Stop Main Thread
   stopMainThread();
 
   RCLCPP_INFO_STREAM(
@@ -574,8 +596,27 @@ void KangarooX2Component::mainThreadFunc()
     }
     // <---- Interruption check
 
-    // Simulate task duration to test statistics
-    rclcpp::sleep_for(std::chrono::microseconds(15126));
+
+    // ----> Read velocities
+    kx2::KangarooStatus d_status;
+    d_status = _kx2ChDrive->getSpeed();
+    if (d_status.valid()) {
+      _d_speed = static_cast<double>(d_status.value()) / 1000.;
+    }
+
+    kx2::KangarooStatus t_status;
+    t_status = _kx2ChTurn->getSpeed();
+    if (t_status.valid()) {
+      _t_speed = static_cast<double>(t_status.value());
+    }
+
+    RCLCPP_DEBUG_STREAM(
+      get_logger(),
+      " * Drive speed: " << _d_speed / 1000. << " m/sec");
+    RCLCPP_DEBUG_STREAM(
+      get_logger(),
+      " * Turn speed: " << _t_speed << " °/sec");
+    // <---- Read velocities
 
     // ----> Thread sleep
     double elapsed_sec = duration_meas.toc();

@@ -161,6 +161,11 @@ private:
   std::unique_ptr<KangarooChannel> _kx2ChDrive;
   std::unique_ptr<KangarooChannel> _kx2ChTurn;
   // <---- Kangaroo x2
+
+  // ----> Motor control status
+  double _d_speed;
+  double _t_speed;
+  // <---- Motor control status
 };
 
 }  // namespace kx2
