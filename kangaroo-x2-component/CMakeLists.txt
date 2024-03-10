@@ -134,7 +134,7 @@ set(COMPONENT_INC
 
 set(COMPONENT_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/component/src/kangaroo_x2_component.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/component/include/odometry.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/component/src/odometry.cpp
 )
 
 ###############################################################################

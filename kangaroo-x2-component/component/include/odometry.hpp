@@ -17,6 +17,9 @@
 #ifndef ODOMETRY_HPP
 #define ODOMETRY_HPP
 
+#include <cstdint>
+#include <mutex>
+
 namespace kx2
 {
 
@@ -28,8 +31,37 @@ public:
   explicit Odometry(Mode mode = EXACT_INTEGRATION);
   virtual ~Odometry();
 
+  void update(const double & d_speed, const double & t_speed, const std::uint64_t & ts);
+
+  void getOdometry(
+    double & x_m, double & y_m, double & theta_rad,
+    std::uint64_t & ts);
+
+protected:
+  void integrateRungeKutta(
+    const double & d_speed, const double & t_speed,
+    const std::uint64_t & ts);
+  void integrateExact(
+    const double & d_speed, const double & t_speed,
+    const std::uint64_t & ts);
+
 private:
-}
+  std::mutex _muxOdom;
+
+  Mode _mode;
+
+  double _x_prec;
+  double _y_prec;
+  double _theta_prec;
+  std::uint64_t _ts_prec;
+
+  double _x;
+  double _y;
+  double _theta;
+  std::uint64_t _ts;
+
+  bool _initialized = false;
+};
 
 }  // namespace kx2
 

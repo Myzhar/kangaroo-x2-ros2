@@ -15,3 +15,50 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "odometry.hpp"
+namespace kx2
+{
+
+Odometry::Odometry(Mode mode)
+{
+  _mode = mode;
+}
+
+Odometry::~Odometry() {}
+
+void Odometry::update(
+  const double & d_speed, const double & t_speed,
+  const std::uint64_t & ts)
+{
+  std::lock_guard<std::mutex> lock(_muxOdom);
+
+  if (_mode == EXACT_INTEGRATION) {
+    integrateExact(d_speed, t_speed, ts);
+  } else if (_mode == RUNGE_KUTTA_INTEGRATION) {
+    integrateRungeKutta(d_speed, t_speed, ts);
+  }
+}
+
+void Odometry::integrateRungeKutta(
+  const double & d_speed, const double & t_speed,
+  const std::uint64_t & ts)
+{
+  // See https://github.com/mdrwiega/md_drive_ros/blob/master/src/odometry.cpp
+  if (!_initialized) {
+
+  }
+}
+void Odometry::integrateExact(
+  const double & d_speed, const double & t_speed,
+  const std::uint64_t & ts) {}
+
+void Odometry::getOdometry(double & x_m, double & y_m, double & theta_rad, std::uint64_t & ts)
+{
+  std::lock_guard<std::mutex> lock(_muxOdom);
+
+  x_m = _x;
+  y_m = _y;
+  theta_rad = _theta;
+  ts = _ts;
+}
+
+}  // namespace kx2
