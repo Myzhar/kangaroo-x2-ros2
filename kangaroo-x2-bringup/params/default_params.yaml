@@ -6,7 +6,7 @@
   ros__parameters:
     general:
       control_freq: 20.0 # Control frequency -> frequency of the main thread
-      debug_mode: true # true to activate debug messages
+      debug_mode: false # true to activate debug messages
 
     comm:
       serial_port: "/dev/ttyUSB0" # serial port name
@@ -21,7 +21,8 @@
       track_width_mm: 320.0 # Distance between the middle of the wheels [mm]
       max_drive_accel: 1000 # Maximum drive acceleration [mm/s²]
       max_turn_accel: 360 # Maximum drive acceleration [°/s²]
-      
+      publish_tf: true # Set to false to disable TP broadcasting and fuse the `odom` messages with an external Kalman Filter
+      odom_frame_id: 'base_link' # Frame id for odometry messages      
 
     encoder:
       lines: 100 # The counting feature of the encoder [Pulse per Round (PPR) or lines]. That is CPR/4 [Counts per Round]
