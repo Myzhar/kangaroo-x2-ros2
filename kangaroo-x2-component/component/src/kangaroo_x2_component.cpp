@@ -67,14 +67,13 @@ bool KangarooX2Component::initKangarooX2()
     get_logger(),
     " * Kangaroo x2 Configuration [Differential drive]: ");
   RCLCPP_INFO_STREAM(
-    get_logger(), "   - [Forward channel] D, UNITS: "
-      << _d_dist << " mm = " << _d_lines
-      << " lines");
+    get_logger(),
+    "   - [Drive channel] '" << _kxDriveChannel << "', UNITS : " << _d_dist << " mm = " << _d_lines <<
+      " lines");
   RCLCPP_INFO_STREAM(
     get_logger(),
-    "   - [Turn channel] T, UNITS: " << 360 << "° = "
-
-                                     << _t_lines << " lines");
+    "   - [Turn channel] '" << _kxTurnChannel << "', UNITS: " << 360 << "° = " << _t_lines <<
+      " lines");
   // <---- Calculate diff drive coefficients
 
   return true;
@@ -219,6 +218,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_activate(
                     << static_cast<int>(prev_state.id())
                     << "] -> Active");
 
+  _diagUpdater.force_update();
+
   // create bond connection
   createBond();
 
@@ -259,6 +260,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_deactivate(
     "on_deactivate: " << prev_state.label() << " ["
                       << static_cast<int>(prev_state.id())
                       << "] -> Inactive");
+
+  _diagUpdater.force_update();
 
   // ----> Reset subscribers
   _cmdVelSub.reset();
@@ -312,6 +315,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_cleanup(
                    << static_cast<int>(prev_state.id())
                    << "] -> Unconfigured");
 
+  _diagUpdater.force_update();
+
   // ----> Destroy subscribers
   _cmdVelSub.reset();
   // <---- Destroy subscribers
@@ -332,6 +337,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_shutdown(
                     << static_cast<int>(prev_state.id())
                     << "] -> Finalized");
 
+  _diagUpdater.force_update();
+
   //_scanPub.reset();
 
   // Stop Main Thread
@@ -351,6 +358,8 @@ nav2_util::CallbackReturn KangarooX2Component::on_error(
     "on_error: " << prev_state.label() << " ["
                  << static_cast<int>(prev_state.id())
                  << "] -> Finalized");
+
+  _diagUpdater.force_update();
 
   RCLCPP_INFO_STREAM(
     get_logger(),
@@ -392,6 +401,18 @@ void KangarooX2Component::callback_updateDiagnostic(
       freq_perc);
   }
   // <---- Main thread frequency
+
+  // ----> Motor control
+  ss = std::stringstream();
+  ss << "Current: " << _d_speed
+     << " m/sec - SetPoint: " << (static_cast<double>(_d_speedSetpoint) / 1000.)
+     << " m/sec";
+  stat.addf("Drive speed", ss.str().c_str());
+  ss = std::stringstream();
+  ss << "Current: " << _t_speed << " °/sec - SetPoint: " << _t_speedSetpoint
+     << " °/sec";
+  stat.addf("Turn speed", ss.str().c_str());
+  // <---- Motor control
 }
 
 void KangarooX2Component::getParameters()

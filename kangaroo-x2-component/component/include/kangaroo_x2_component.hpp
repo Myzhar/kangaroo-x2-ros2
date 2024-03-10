@@ -75,11 +75,6 @@ public:
   /// \param[in] state The current state that the node is in.
   nav2_util::CallbackReturn on_error(const lc::State & prev_state) override;
 
-  /// \brief Callback for diagnostic updater
-  /// \param[in] stat The current diagnostic status
-  void callback_updateDiagnostic(
-    diagnostic_updater::DiagnosticStatusWrapper & stat);
-
 protected:
   void startMainThread();
   void stopMainThread();
@@ -115,8 +110,13 @@ protected:
   void getControlParams();
   // <---- Node Parameters
 
-protected:
+  // ----> Callbacks
   void cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr msg);
+
+  /// \brief Callback for diagnostic updater
+  /// \param[in] stat The current diagnostic status
+  void callback_updateDiagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
+  // <---- Callbacks
 
 private:
   // ----> Threads
@@ -140,12 +140,10 @@ private:
   char _kxDriveChannel = 'D';  //!< Drive channel. Use "DEScribe" to configure
   char _kxTurnChannel = 'T';   //!< Drive channel. Use "DEScribe" to configure
 
-  int32_t _driveRamp =
-    1000;                   //!< Max drive acceleration/deceleration in mm/sec²
+  int32_t _driveRamp = 1000; //!< Max drive acceleration/deceleration in mm/sec²
   int32_t _turnRamp = 360;  //!< Max turn acceleration/deceleration in deg/sec²
   double _wheelRad_mm = 0.0f;  //!< Radius of the wheels [mm]
-  double _trackWidth_mm =
-    0.0;              //!< Distance between the middle of the wheels [mm]
+  double _trackWidth_mm = 0.0;  //!< Distance between the middle of the wheels [mm]
   int _encLines = 0;  //!< The counting feature of the encoder [Pulse per Round
                       //!< (PPR) or lines]. That is CPR/4 [Counts per Round]
   double _gearRatio = 1.0f;  //!< Motor gear ration -> _gearRation:1
@@ -171,8 +169,8 @@ private:
   // <---- Kangaroo x2
 
   // ----> Motor control status
-  double _d_speed;
-  double _t_speed;
+  double _d_speed; // m/sec
+  double _t_speed; // °/sec
   int32_t _d_speedSetpoint = 0;
   int32_t _t_speedSetpoint = 0;
   // <---- Motor control status
