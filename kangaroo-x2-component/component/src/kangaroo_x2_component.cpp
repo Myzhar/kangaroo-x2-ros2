@@ -536,6 +536,26 @@ void KangarooX2Component::getCommParams()
   getParam(
     "comm.timeout_msec", _readTimeOut_msec, _readTimeOut_msec,
     "Data reading timeout in msec", false, " * Timeout [msec]: ");
+
+  getParam(
+    "comm.kx2_address", _kx2Address, _kx2Address,
+    "Kangaroo x2 address. Use 'DEScribe' software to configure", true,
+    " * Board address: ");
+
+  std::string par_val;
+  getParam(
+    "comm.kx2_drive_channel", par_val, par_val,
+    "Kangaroo x2 name of the drive channel. Use the 'DEScribe' sw to "
+    "configure",
+    true, " * Drive channel: ");
+  _kxDriveChannel = par_val[0];
+
+  getParam(
+    "comm.kx2_turn_channel", par_val, par_val,
+    "Kangaroo x2 name of the turn channel. Use the 'DEScribe' sw to "
+    "configure",
+    true, " * Turn channel: ");
+  _kxTurnChannel = par_val[0];
   // <---- Communication
 }
 
@@ -543,7 +563,7 @@ void KangarooX2Component::getControlParams()
 {
   RCLCPP_INFO(get_logger(), "+++ MOTOR CONTROL PARAMETERS +++");
 
-  // ----> Communication
+  // ----> Differential Drive
   getParam(
     "diff_drive.wheel_radius_mm", _wheelRad_mm, _wheelRad_mm,
     "Wheel radius in millimeters", true, " * Wheel radius [mm]: ");
@@ -553,6 +573,18 @@ void KangarooX2Component::getControlParams()
     "Distance between the middle of the wheels in millimeters", true,
     " * Track Width [mm]: ");
 
+  getParam(
+    "diff_drive.max_drive_accel", _driveRamp, _driveRamp,
+    "Maximum drive acceleration [mm/s²]", false,
+    " * Max Drice Accel. [mm/s²]: ");
+
+  getParam(
+    "diff_drive.max_turn_accel", _turnRamp, _turnRamp,
+    "Maximum turn acceleration [°/s²]", false,
+    " * Max Turn Accel. [°/s²]: ");
+  // <---- Differential Drive
+
+  // ----> Encoders and reduction
   getParam(
     "encoder.lines", _encLines, _encLines,
     "The counting feature of the encoder [Pulse per Round (PPR) or "
@@ -565,6 +597,7 @@ void KangarooX2Component::getControlParams()
     "placed.",
     true);
   RCLCPP_INFO_STREAM(get_logger(), " * Gear ratio: " << _gearRatio << ":1");
+  // <---- Encoders and reduction
 }
 
 void KangarooX2Component::startMainThread()

@@ -136,15 +136,13 @@ private:
   std::string _serialPort = "/dev/tty0";  //!< Serial port name
   int _baudrate = 115200;                 //!< Serial baudrate
   int _readTimeOut_msec = 1000;           //!< Serial read timeout in msec
-
-  // TODO(Walt) Add these parameters
   int _kx2Address = 128;       //!< Board address. Use "DEScribe" to configure
   char _kxDriveChannel = 'D';  //!< Drive channel. Use "DEScribe" to configure
   char _kxTurnChannel = 'T';   //!< Drive channel. Use "DEScribe" to configure
+
   int32_t _driveRamp =
     1000;                   //!< Max drive acceleration/deceleration in mm/sec²
   int32_t _turnRamp = 360;  //!< Max turn acceleration/deceleration in deg/sec²
-
   double _wheelRad_mm = 0.0f;  //!< Radius of the wheels [mm]
   double _trackWidth_mm =
     0.0;              //!< Distance between the middle of the wheels [mm]
